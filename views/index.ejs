@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
+
   <body>
     <h1><%= title %></h1>
     <p>Bienvenido al sistema de gestión</p>
-
     <hr>
-
     <h2>Lista de Productos</h2>
+
+    <form action="/buscar" method="GET">
+    <input type="text" name="nombre" placeholder="Buscar producto..." required>
+    <button type="submit">🔍 Buscar</button>
+    <a href="/">Ver todos</a>
+</form>
+
+<hr>
+
     <ul>
       <% lista.forEach((producto) => { %>
         <li>
@@ -19,5 +28,37 @@
         </li>
       <% }); %>
     </ul>
+
+
+    <ul>
+    <% lista.forEach((producto) => { %>
+    <li>
+      <strong><%= producto.nombre %></strong> - <%= producto.categoria %>
+      <!-- Enlace dinámico con el ID -->
+      <a href="/editar/<%= producto.id %>"> [Editar] </a>
+    </li>
+    <% }); %>
+    </ul>
+
+
+    <ul>
+    <% lista.forEach((producto) => { %>
+    <li>
+      <strong><%= producto.nombre %></strong> - <%= producto.categoria %>
+      
+      <!-- Boton de Editar -->
+      <a href="/editar/<%= producto.id %>"> [Editar] </a>
+
+      <!-- Boton de Eliminar con confirmacion -->
+      <a href="/eliminar/<%= producto.id %>" 
+         style="color: red;" 
+         onclick="return confirm('¿Seguro que quieres eliminar este producto?')"> 
+         [Eliminar] 
+      </a>
+    </li>
+    <% }); %>
+    </ul>
+
+
   </body>
 </html>

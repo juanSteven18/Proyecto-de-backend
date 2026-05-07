@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+    <h1><%= title %></h1>
+    <form action="/guardar" method="POST">
+        <div>
+            <label>Nombre del Producto:</label>
+            <input type="text" name="nombre" required>
+        </div>
+        <br>
+        <div>
+            <label>Categoría:</label>
+            <input type="text" name="categoria" required>
+        </div>
+        <br>
+        <button type="submit">Guardar Producto</button>
+        <a href="/">Cancelar</a>
+    </form>
+    
+</body>
+</html>

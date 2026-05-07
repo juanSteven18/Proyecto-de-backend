@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+    <h1><%= title %></h1>
+    <!-- El action incluye el ID para saber cuál editar -->
+    <form action="/actualizar/<%= producto.id %>" method="POST">
+        <div>
+            <label>Nombre:</label>
+            <input type="text" name="nombre" value="<%= producto.nombre %>" required>
+        </div>
+        <br>
+        <div>
+            <label>Categoría:</label>
+            <input type="text" name="categoria" value="<%= producto.categoria %>" required>
+        </div>
+        <br>
+        <button type="submit">Guardar Cambios</button>
+        <a href="/">Cancelar</a>
+    </form>
+</body>
+
+</html>
