@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <h1>🔍 Filtrar por Rango de Fechas</h1>
+
+    <form action="/filtros/fechas" method="GET" style="background: #f4f4f4; padding: 20px; border-radius: 8px;">
+        <label>Desde:</label>
+        <input type="date" name="inicio" required>
+        
+        <label>Hasta:</label>
+        <input type="date" name="fin" required>
+        
+        <button type="submit">Filtrar</button>
+        <a href="/">Limpiar</a>
+    </form>
+
+    <hr>
+
+    <% if (busqueda) { %>
+        <h2>Resultados entre <%= rango.inicio %> y <%= rango.fin %></h2>
+        <% if (lista.length > 0) { %>
+            <table border="1" width="100%">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% lista.forEach(p => { %>
+                        <tr>
+                            <td><%= p.nombre %></td>
+                            <td><%= p.categoria %></td>
+                            <td><%= p.fecha %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No se encontraron productos en este rango.</p>
+        <% } %>
+    <% } else { %>
+        <p>Selecciona un rango de fechas para comenzar.</p>
+    <% } %>
+
+    <br>
+    <a href="/">⬅ Volver al Panel Principal</a>
+</body>
+</html>
