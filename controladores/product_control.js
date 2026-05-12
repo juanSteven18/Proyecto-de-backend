@@ -40,7 +40,8 @@ class ProductController {
         const nuevoProducto = {
             id: nuevoId,
             nombre: nombre,
-            categoria: categoria
+            categoria: categoria,
+            fecha: new Date().toISOString().split('T')[0]
         };
 
         productos.push(nuevoProducto);
@@ -89,6 +90,59 @@ eliminar(req, res) {
 
     res.redirect('/');
 }
+
+
+
+//////Detalle Individual
+verDetalle(req, res) {
+    const id = req.params.id;
+    const producto = productos.find(p => p.id == id);
+
+    if (!producto) return res.status(404).send("Producto no encontrado");
+
+    res.render('detalle', { 
+        title: 'Detalle del Producto', 
+        producto: producto 
+    });
+}
+
+////////Top 5 
+verTop5(req, res) {
+    // Clonamos el array, lo invertimos y tomamos los primeros 5
+    const ultimosCinco = [...productos].reverse().slice(0, 5);
+
+    res.render('top5', { 
+        title: 'Últimos 5 Productos Agregados', 
+        lista: ultimosCinco 
+    });
+}
+
+//////filtrodo de fechas de productos
+filtrarPorRango(req, res) {
+    const { inicio, fin } = req.query;
+
+    if (!inicio || !fin) {
+        return res.render('filtros', { 
+            title: 'Búsqueda por Rango de Fechas', 
+            lista: [],
+            busqueda: false
+        });
+    }
+
+    const resultados = productos.filter(p => {
+        return p.fecha >= inicio && p.fecha <= fin;
+    });
+
+ 
+    res.render('filtros', { 
+        title: 'Resultados del Filtro', 
+        lista: resultados,
+        busqueda: true,
+        rango: { inicio, fin }
+    });
+}
+
+
 }
 
 

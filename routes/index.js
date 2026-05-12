@@ -21,7 +21,16 @@ router.get('/editar/:id', productosControl.vistaEditar);
 // Ruta para recibir los datos editados
 router.post('/actualizar/:id', productosControl.actualizar);
 
+// Endpoint para la lógica de filtros
+router.get('/filtros/fechas', productosControl.filtrarPorRango);
+
 //Ruta para eliminar datos
 router.get('/eliminar/:id', productosControl.eliminar);
+
+//Ver detalle
+router.get('/producto/:id', productosControl.verDetalle);
+
+//Ver Top 5
+router.get('/top5', productosControl.verTop5);
 
 module.exports = router;
