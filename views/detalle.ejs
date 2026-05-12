@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <h1><%= producto.nombre %></h1>
+    <div style="border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+        <p><strong>ID:</strong> <%= producto.id %></p>
+        <p><strong>Categoría:</strong> <%= producto.categoria %></p>
+        <p><strong>Fecha de Ingreso:</strong> <%= producto.fecha %></p>
+    </div>
+    <br>
+    <a href="/">⬅ Volver al listado</a>
+    <a href="/editar/<%= producto.id %>">✏️ Editar</a>
+</body>
+</html>

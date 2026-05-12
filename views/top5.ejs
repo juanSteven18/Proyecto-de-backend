@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <h1><%= title %></h1>
+    <p>Estos son los productos más recientes en el sistema.</p>
+    <ul>
+      <% lista.forEach((p) => { %>
+        <li><strong><%= p.nombre %></strong> (Agregado el: <%= p.fecha %>)</li>
+      <% }); %>
+    </ul>
+    <a href="/">Volver al inicio</a>
+</body>
+</html>
