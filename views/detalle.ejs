@@ -5,14 +5,15 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-    <h1><%= producto.nombre %></h1>
+    <h1><%= pelicula.titulo %></h1>
     <div style="border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
-        <p><strong>ID:</strong> <%= producto.id %></p>
-        <p><strong>Categoría:</strong> <%= producto.categoria %></p>
-        <p><strong>Fecha de Ingreso:</strong> <%= producto.fecha %></p>
+        <p><strong>ID:</strong> <%= pelicula.id %></p>
+        <p><strong>Titulo:</strong> <%= pelicula.titulo%></p>
+        <p><strong>Duracion:</strong> <%= pelicula.duracion %></p>
+        <p><strong>genero:</strong> <%= pelicula.genero %></p>
     </div>
     <br>
     <a href="/">⬅ Volver al listado</a>
-    <a href="/editar/<%= producto.id %>">✏️ Editar</a>
+    <a href="/editar/<%= pelicula.id %>">✏️ Editar</a>
 </body>
 </html>

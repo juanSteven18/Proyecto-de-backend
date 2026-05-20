@@ -10,16 +10,21 @@
     <h1><%= title %></h1>
     <form action="/guardar" method="POST">
         <div>
-            <label>Nombre del Producto:</label>
-            <input type="text" name="nombre" required>
+            <label>Nombre de la Pelicula:</label>
+            <input type="text" name="titulo" required>
         </div>
         <br>
         <div>
-            <label>Categoría:</label>
-            <input type="text" name="categoria" required>
+            <label>Duracion:</label>
+            <input type="number" name="duracion" required>
         </div>
         <br>
-        <button type="submit">Guardar Producto</button>
+         <div>
+            <label>Genero:</label>
+            <input type="text" name="genero" required>
+        </div>
+        <br>
+        <button type="submit">Guardar Pelicula</button>
         <a href="/">Cancelar</a>
     </form>
     

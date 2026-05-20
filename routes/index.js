@@ -1,36 +1,35 @@
 const express = require('express');
 const router = express.Router();
-
-const productosControl = require('../controladores/product_control');
+const cineController = require('../controladores/cine_control');
 
 //Ruta para ver los productos
-router.get('/', productosControl.listar);
+router.get('/', cineController.listar);
 
 // Ruta de búsqueda
-router.get('/buscar', productosControl.buscarPorNombre);
+router.get('/buscar', cineController.buscarPorNombre);
 
 // Ruta para ver el formulario
-router.get('/crear', productosControl.vistaCrear);
+router.get('/crear', cineController.vistaCrear);
 
 // Ruta para recibir los datos del formulario
-router.post('/guardar', productosControl.almacenar);
+router.post('/guardar', cineController.almacenar);
 
 // Ruta para ver el formulario de edicion 
-router.get('/editar/:id', productosControl.vistaEditar);
+router.get('/editar/:id', cineController.vistaEditar);
 
 // Ruta para recibir los datos editados
-router.post('/actualizar/:id', productosControl.actualizar);
+router.post('/actualizar/:id', cineController.actualizar);
 
 // Endpoint para la lógica de filtros
-router.get('/filtros/fechas', productosControl.filtrarPorRango);
+router.get('/filtros/fechas', cineController.filtrarPorRango);
 
 //Ruta para eliminar datos
-router.get('/eliminar/:id', productosControl.eliminar);
+router.get('/eliminar/:id', cineController.eliminar);
 
 //Ver detalle
-router.get('/producto/:id', productosControl.verDetalle);
+router.get('/pelicula/:id', cineController.verDetalle);
 
 //Ver Top 5
-router.get('/top5', productosControl.verTop5);
+router.get('/top5', cineController.verTop5);
 
 module.exports = router;

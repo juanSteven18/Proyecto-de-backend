@@ -8,57 +8,50 @@
 
   <body>
     <h1><%= title %></h1>
-    <p>Bienvenido al sistema de gestión</p>
+    <p>Bienvenido al sistema de gestión del Cine calajo</p>
     <hr>
-    <h2>Lista de Productos</h2>
+    <h2>Lista de peliculas</h2>
 
-    <form action="/buscar" method="GET">
-    <input type="text" name="nombre" placeholder="Buscar producto..." required>
-    <button type="submit">🔍 Buscar</button>
-    <a href="/">Ver todos</a>
-</form>
+   
+
+   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1><%= title %></h1>
+    <div>
+        <a href="/crear" style="padding: 8px 15px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; margin-right: 5px;">➕ Nuevo</a>
+        <a href="/top5" style="padding: 8px 15px; background: #ffc107; color: black; text-decoration: none; border-radius: 4px; margin-right: 5px;">🔥 Top 5</a>
+        <a href="/filtros/fechas" style="padding: 8px 15px; background: #17a2b8; color: white; text-decoration: none; border-radius: 4px;">📅 Filtros</a>
+    </div>
+</div>
 
 <hr>
 
-    <ul>
-      <% lista.forEach((producto) => { %>
-        <li>
-          <strong><%= producto.nombre %></strong> - 
-          <span>Categoría: <%= producto.categoria %></span>
-        </li>
-      <% }); %>
-    </ul>
-
-
-    <ul>
-    <% lista.forEach((producto) => { %>
-    <li>
-      <strong><%= producto.nombre %></strong> - <%= producto.categoria %>
-      <!-- Enlace dinámico con el ID -->
-      <a href="/editar/<%= producto.id %>"> [Editar] </a>
-    </li>
-    <% }); %>
-    </ul>
-
-
-    <ul>
-    <% lista.forEach((producto) => { %>
-    <li>
-      <strong><%= producto.nombre %></strong> - <%= producto.categoria %>
-      
-      <!-- Boton de Editar -->
-      <a href="/editar/<%= producto.id %>"> [Editar] </a>
-
-      <!-- Boton de Eliminar con confirmacion -->
-      <a href="/eliminar/<%= producto.id %>" 
-         style="color: red;" 
-         onclick="return confirm('¿Seguro que quieres eliminar este producto?')"> 
-         [Eliminar] 
-      </a>
-    </li>
-    <% }); %>
-    </ul>
-
+<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+    <thead>
+        <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6; text-align: left;">
+            <th style="padding: 12px;">Titulo</th>
+            <th style="padding: 12px;">Duracion</th>
+            <th style="padding: 12px;">Genero</th>
+            <th style="padding: 12px; text-align: center;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% lista.forEach((pelicula) => { %>
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 12px;"><strong><%= pelicula.titulo %></strong></td>
+                <td style="padding: 12px;"><span style="background: #e9ecef; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;"><%= pelicula.duracion %></span></td>
+                <td style="padding: 12px;"><strong><%= pelicula.genero %></strong></td>
+                <td style="padding: 12px; text-align: center;">
+                    <a href="/pelicula/<%= pelicula.id %>" style="margin: 0 8px; color: #007bff; text-decoration: none;">👁️ Ver</a>
+                    <span style="color: #ccc;">|</span>
+                    <a href="/editar/<%= pelicula.id %>" style="margin: 0 8px; color: #28a745; text-decoration: none;">✏️ Editar</a>
+                    <span style="color: #ccc;">|</span>
+                    <a href="/eliminar/<%= pelicula.id %>" style="margin: 0 8px; color: #dc3545; text-decoration: none;" 
+                       onclick="return confirm('¿Estás seguro de eliminar esta?')">🗑️ Eliminar</a>
+                </td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>
 
   </body>
 </html>
