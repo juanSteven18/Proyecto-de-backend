@@ -1,24 +1,23 @@
-var { peliculas, salas, boletos, peliculas } = require('../base');
+var { peliculas, salas, boletos, funciones, reservaciones } = require('../base');
 const crypto = require('crypto');
 
 class cineController {
 
-
-
-///////Metodo para listar
+// VER
 listar(req, res) {
-        res.render('index', { 
-            lista: peliculas
-        });
+    res.render('index', { 
+        title: 'Cartelera de Cine',
+        lista: peliculas
+    });
 }
-//Listar todas las salas
+
 listarSalas(req, res) {
     res.render('salas', { 
         title: 'Gestion de Salas de Cine',
-        listaSalas: salas // Enviamos el array de salas
+        listaSalas: salas
     });
 }
-//Listar boletos cruzando informacion de Peliculas y Salas
+
 listarBoletos(req, res) {
     const listaEnriquecida = boletos.map(b => {
         const peli = peliculas.find(p => p.id == b.peliculaId);
@@ -39,43 +38,172 @@ listarBoletos(req, res) {
         salas: salas          
     });
 }
-///////Metodo para buscar obj especifico
-buscarPorNombre(req, res) {
-    const nombreBusqueda = req.query.nombre; 
 
-///////Filtramos el array buscando coincidencias parciales
-    const resultados = peliculas.filter(p => 
-        p.titulo.toLowerCase().includes(nombreBusqueda.toLowerCase())
-    );
+listarFuncionesPorPelicula(req, res) {
+    const peliculaId = req.params.id;
+    const pelicula = peliculas.find(p => p.id == peliculaId);
+    
+    if (!pelicula) {
+        return res.send("Pelicula no encontrada");
+    }
 
-///////Reutilizamos la vista 'index' pero le pasamos solo los resultados
-    res.render('index', { 
-        title: `Resultados para: ${nombreBusqueda}`,
-        lista: resultados 
+    const funcionesFiltradas = funciones.filter(f => f.peliculaId == peliculaId);
+
+    const listaEnriquecida = funcionesFiltradas.map(f => {
+        const sala = salas.find(s => s.id == f.salaId);
+        return {
+            ...f,
+            nombreSala: sala ? sala.nombre : "Sala No Asignada"
+        };
+    });
+
+    res.render('funciones', {
+        title: `Funciones disponibles para: ${pelicula.titulo}`,
+        pelicula,
+        listaFunciones: listaEnriquecida,
+        salas: salas
     });
 }
 
-///////Metodo para añadir
+listarReservaciones(req, res) {
+    const listaEnriquecida = reservaciones.map(reserva => {
+        const funcion = funciones.find(f => f.id == reserva.funcionId);
+        
+        let tituloPelicula = "Pelicula No Asignada";
+        let nombreSala = "Sala No Asignada";
+        let fecha = "N/A";
+        let hora = "N/A";
 
-///////Mostrar el formulario
-vistaCrear(req, res) {
-        res.render('crear', { title: 'Añadir Nueva Pelicula' });
-}
-///////Procesar los datos y guardar 
-almacenar(req, res) {
-        const { titulo, duracion, genero } = req.body;
+        if (funcion) {
+            const peli = peliculas.find(p => p.id == funcion.peliculaId);
+            const sala = salas.find(s => s.id == funcion.salaId);
+            
+            tituloPelicula = peli ? peli.titulo : "Pelicula Eliminada";
+            nombreSala = sala ? sala.nombre : "Sala Eliminada";
+            fecha = funcion.fecha;
+            hora = funcion.hora;
+        }
 
-        const nuevaPeli = {
-            id: crypto.randomUUID(),
-            titulo: titulo,
-            duracion: parseInt(duracion),
-            genero: genero
+        return {
+            ...reserva,
+            tituloPelicula,
+            nombreSala,
+            fecha,
+            hora
         };
+    });
 
-       peliculas.push(nuevaPeli);
-        res.redirect('/');
+    res.render('reservaciones', {
+        title: 'Listado de Reservaciones Pendientes',
+        listaReservaciones: listaEnriquecida
+    });
 }
-    //Crear/Guardar una nueva sala
+
+verDetalle(req, res) {
+    const id = req.params.id;
+    const pelicula = peliculas.find(p => p.id == id);
+
+    if (!pelicula) return res.status(404).send("Pelicula no encontrada");
+
+    res.render('detalle', { 
+        title: 'Detalle de la pelicula', 
+        pelicula: pelicula
+    });
+}
+
+// EDITAR
+editarFuncionForm(req, res) {
+    const funcionId = req.params.id;
+    const funcionEncontrada = funciones.find(f => f.id == funcionId);
+
+    if (!funcionEncontrada) {
+        return res.send("Funcion no encontrada");
+    }
+
+    const pelicula = peliculas.find(p => p.id == funcionEncontrada.peliculaId);
+
+    res.render('editar_funcion', {
+        title: 'Modificar Horario de funcion',
+        funcion: funcionEncontrada,
+        pelicula: pelicula,
+        salas: salas
+    });
+}
+
+editarReservacionForm(req, res) {
+    const reservaId = req.params.id;
+    const reservaEncontrada = reservaciones.find(r => r.id == reservaId);
+
+    if (!reservaEncontrada) {
+        return res.send("Reservacion no encontrada");
+    }
+
+    res.render('editar_reservacion', {
+        title: 'Modificar Datos de la Reservacion',
+        reservacion: reservaEncontrada
+    });
+}
+
+// VISTASEDITAR
+vistaCrear(req, res) {
+    res.render('crear', { title: 'Anadir Nueva Pelicula' });
+}
+
+vistaEditar(req, res) {
+    const id = req.params.id; 
+    const pelicula = peliculas.find(p => p.id == id);
+
+    if (!pelicula) {
+        return res.send("Pelicula no encontrada");
+    }
+
+    res.render('editar', { 
+        title: 'Editar Pelicula', 
+        pelicula: pelicula 
+    });
+}
+
+vistaEditarSala(req, res) {
+    const id = req.params.id;
+    const sala = salas.find(s => s.id == id);
+
+    if (!sala) return res.status(404).send("Sala no encontrada");
+
+    res.render('editarSala', { 
+        title: 'Modificar Datos de la Sala', 
+        sala: sala 
+    });
+}
+
+vistaEditarBoleto(req, res) {
+    const id = req.params.id;
+    const boleto = boletos.find(b => b.id == id);
+
+    if (!boleto) return res.status(404).send("Boleto no encontrado");
+
+    res.render('editarBoleto', { 
+        title: 'Reasignar / Editar Boleto', 
+        boleto: boleto,
+        peliculas: peliculas, 
+        salas: salas          
+    });
+}
+
+// GUARDAR
+almacenar(req, res) {
+    const { titulo, duracion, genero } = req.body;
+
+    const nuevaPeli = {
+        id: crypto.randomUUID(),
+        titulo: titulo,
+        duracion: parseInt(duracion),
+        genero: genero
+    };
+
+    peliculas.push(nuevaPeli);
+    res.redirect('/');
+}
+
 guardarSala(req, res) {
     const { nombre, capacidad } = req.body;
 
@@ -86,9 +214,9 @@ guardarSala(req, res) {
     };
 
     salas.push(nuevaSala);
-    res.redirect('/salas'); // Redirecciona al listado de salas para ver el cambio
+    res.redirect('/salas');
 }
-//Procesar la venta de un nuevo boleto
+
 guardarBoleto(req, res) {
     const { peliculaId, salaId, asiento, fecha } = req.body;
 
@@ -104,60 +232,55 @@ guardarBoleto(req, res) {
     res.redirect('/boletos');
 }
 
+guardarFuncion(req, res) {
+    const { peliculaId, salaId, fecha, hora } = req.body;
 
+    const salaElegida = salas.find(s => s.id == salaId);
+    const capacidadInicial = salaElegida ? parseInt(salaElegida.capacidad) : 0;
 
-///////Metodo para editar
+    const nuevaFuncion = {
+        id: crypto.randomUUID(),
+        peliculaId: peliculaId,
+        salaId: salaId,
+        fecha: fecha,
+        hora: hora,
+        disponibilidad: capacidadInicial
+    };
 
-///////Mostrar el formulario con los datos actuales
-vistaEditar(req, res) {
-    const id = req.params.id; 
-    const pelicula = peliculas.find(p => p.id == id); // Buscamos el producto
+    funciones.push(nuevaFuncion);
+    res.redirect('/pelicula/' + peliculaId + '/funciones');
+}
 
-    if (!pelicula) {
-        return res.send("Pelicula no encontrada");
+guardarReservacion(req, res) {
+    const { funcionId, nombreCliente, asiento } = req.body;
+
+    const funcionAsociada = funciones.find(f => f.id == funcionId);
+
+    if (!funcionAsociada || funcionAsociada.disponibilidad <= 0) {
+        return res.send("Lo sentimos, ya no hay disponibilidad para esta funcion.");
     }
 
-    res.render('editar', { 
-        title: 'Editar Pelicula', 
-        pelicula: pelicula 
-    });
+    const nuevaReserva = {
+        id: crypto.randomUUID(),
+        funcionId: funcionId,
+        nombreCliente: nombreCliente,
+        asiento: asiento,
+        estado: "RESERVADO"
+    };
+
+    reservaciones.push(nuevaReserva);
+    funcionAsociada.disponibilidad -= 1;
+    res.redirect('/reservaciones');
 }
-//Mostrar el formulario con los datos cargados
-vistaEditarSala(req, res) {
-    const id = req.params.id;
-    const sala = salas.find(s => s.id == id);
 
-    if (!sala) return res.status(404).send("Sala no encontrada");
-
-    res.render('editarSala', { 
-        title: 'Modificar Datos de la Sala', 
-        sala: sala 
-    });
-}
-//Mostrar el formulario con los datos del boleto, películas y salas disponibles
-vistaEditarBoleto(req, res) {
-    const id = req.params.id;
-    const boleto = boletos.find(b => b.id == id);
-
-    if (!boleto) return res.status(404).send("Boleto no encontrado");
-
-    res.render('editarBoleto', { 
-        title: 'Reasignar / Editar Boleto', 
-        boleto: boleto,
-        peliculas: peliculas, 
-        salas: salas          
-    });
-}
-///////Procesar el cambio
+// ACTUALIZAR
 actualizar(req, res) {
     const id = req.params.id;
     const { titulo, duracion, genero} = req.body;
 
-///////Buscamos el indice del producto en el array
     const indice = peliculas.findIndex(p => p.id == id);
 
     if (indice !== -1) {
-///////Actualizamos los datos en esa posicion
         peliculas[indice].titulo = titulo;
         peliculas[indice].duracion = duracion;
         peliculas[indice].genero = genero;
@@ -165,7 +288,7 @@ actualizar(req, res) {
 
     res.redirect('/');
 }
-//Procesar la actualización de una sala
+
 actualizarSala(req, res) {
     const id = req.params.id;
     const { nombre, capacidad } = req.body;
@@ -179,7 +302,7 @@ actualizarSala(req, res) {
 
     res.redirect('/salas');
 }
-//Modificar un boleto existente (cambio de asiento, sala o película)
+
 actualizarBoleto(req, res) {
     const id = req.params.id;
     const { peliculaId, salaId, asiento, fecha } = req.body;
@@ -196,21 +319,56 @@ actualizarBoleto(req, res) {
     res.redirect('/boletos');
 }
 
+actualizarFuncion(req, res) {
+    const funcionId = req.params.id;
+    const { salaId, fecha, hora } = req.body;
 
+    const index = funciones.findIndex(f => f.id == funcionId);
 
-///////Metodo para eliminar
-eliminar(req, res) {
-    const id = req.params.id;
-        const indice = peliculas.findIndex(p => p.id == id);
-
-        if (indice !== -1) {
-            peliculas.splice(indice, 1); // Remueve el elemento en esa posicion
+    if (index !== -1) {
+        if (funciones[index].salaId !== salaId) {
+            const nuevaSala = salas.find(s => s.id == salaId);
+            funciones[index].disponibilidad = nuevaSala ? parseInt(nuevaSala.capacidad) : funciones[index].disponibilidad;
         }
 
-        res.redirect('/');
+        funciones[index].salaId = salaId;
+        funciones[index].fecha = fecha;
+        funciones[index].hora = hora;
 
+        res.redirect('/pelicula/' + funciones[index].peliculaId + '/funciones');
+    } else {
+        res.send("Error al actualizar la funcion");
+    }
 }
-//Eliminar una sala por ID
+
+actualizarReservacion(req, res) {
+    const reservaId = req.params.id;
+    const { nombreCliente, asiento } = req.body;
+
+    const index = reservaciones.findIndex(r => r.id == reservaId);
+
+    if (index !== -1) {
+        reservaciones[index].nombreCliente = nombreCliente;
+        reservaciones[index].asiento = asiento;
+
+        res.redirect('/reservaciones');
+    } else {
+        res.send("Error al actualizar la reservacion");
+    }
+}
+
+// ELIMINAR
+eliminar(req, res) {
+    const id = req.params.id;
+    const indice = peliculas.findIndex(p => p.id == id);
+
+    if (indice !== -1) {
+        peliculas.splice(indice, 1);
+    }
+
+    res.redirect('/');
+}
+
 eliminarSala(req, res) {
     const id = req.params.id;
     const indice = salas.findIndex(s => s.id == id);
@@ -221,7 +379,7 @@ eliminarSala(req, res) {
 
     res.redirect('/salas');
 }
-//Cancelar un boleto por su ID
+
 eliminarBoleto(req, res) {
     const id = req.params.id;
     const indice = boletos.findIndex(b => b.id == id);
@@ -233,47 +391,78 @@ eliminarBoleto(req, res) {
     res.redirect('/boletos');
 }
 
+eliminarFuncion(req, res) {
+    const funcionId = req.params.id;
+    const funcionEncontrada = funciones.find(f => f.id == funcionId);
 
+    if (!funcionEncontrada) {
+        return res.send("Funcion no encontrada");
+    }
 
-//////Detalle Individual
-verDetalle(req, res) {
-    const id = req.params.id;
-    const pelicula = peliculas.find(p => p.id == id);
+    const peliculaId = funcionEncontrada.peliculaId;
+    
+    const index = funciones.findIndex(f => f.id == funcionId);
+    if (index !== -1) {
+        funciones.splice(index, 1);
+    }
 
-    if (!pelicula) return res.status(404).send("Pelicula no encontrada");
+    res.redirect('/pelicula/' + peliculaId + '/funciones');
+}
 
-    res.render('detalle', { 
-        title: 'Detalle de la pelicula', 
-        pelicula: pelicula
+eliminarReservacion(req, res) {
+    const reservaId = req.params.id;
+    const index = reservaciones.findIndex(r => r.id == reservaId);
+
+    if (index !== -1) {
+        const funcionAsociada = funciones.find(f => f.id == reservaciones[index].funcionId);
+        if (funcionAsociada) {
+            funcionAsociada.disponibilidad += 1;
+        }
+
+        reservaciones.splice(index, 1);
+        res.redirect('/reservaciones');
+    } else {
+        res.send("Reservacion no encontrada");
+    }
+}
+
+// FUNCIONES ADICIONALES
+buscarPorNombre(req, res) {
+    const nombreBusqueda = req.query.nombre; 
+
+    const resultados = peliculas.filter(p => 
+        p.titulo.toLowerCase().includes(nombreBusqueda.toLowerCase())
+    );
+
+    res.render('index', { 
+        title: `Resultados para: ${nombreBusqueda}`,
+        lista: resultados 
     });
 }
-////////Top 5 
-verTop5(req, res) {
-    
-        const ultimasPeliculas = [...peliculas].reverse().slice(0, 3);
 
-        res.render('top5', { 
-            title: 'Últimas 3 Peliculas en Cartelera', 
-            lista: ultimasPeliculas 
-        });
+verTop5(req, res) {
+    const ultimasPeliculas = [...peliculas].reverse().slice(0, 3);
+
+    res.render('top5', { 
+        title: 'Ultimas 3 Peliculas en Cartelera', 
+        lista: ultimasPeliculas 
+    });
 }
-//////filtrado de fechas de boletos/ventas
+
 filtrarPorRango(req, res) {
     const { inicio, fin } = req.query;
 
     if (!inicio || !fin) {
         return res.render('filtros', { 
-            title: 'Búsqueda por Rango de Fechas', 
+            title: 'Busqueda por Rango de Fechas', 
             lista: [],
             busqueda: false
         });
     }
 
-    //Filtramos los boletos que estén dentro del rango de fechas
     const boletosFiltrados = boletos.filter(b => {
         return b.fecha >= inicio && b.fecha <= fin;
     });
-
 
     const resultados = boletosFiltrados.map(bto => {
         const peli = peliculas.find(p => p.id == bto.peliculaId);
@@ -285,7 +474,6 @@ filtrarPorRango(req, res) {
         };
     });
 
-    // Enviamos los resultados procesados a la vista
     res.render('filtros', { 
         title: 'Resultados del Filtro', 
         lista: resultados,
@@ -293,7 +481,36 @@ filtrarPorRango(req, res) {
         rango: { inicio, fin }
     });
 }
+
+concretarReservacion(req, res) {
+    const reservaId = req.params.id;
+    const index = reservaciones.findIndex(r => r.id == reservaId);
+
+    if (index !== -1) {
+        const reserva = reservaciones[index];
+        const funcion = funciones.find(f => f.id == reserva.funcionId);
+
+        if (!funcion) {
+            return res.send("La funcion asociada a esta reserva ya no existe.");
+        }
+
+        const nuevoBoleto = {
+            id: crypto.randomUUID(),
+            peliculaId: funcion.peliculaId,
+            salaId: funcion.salaId,
+            asiento: reserva.asiento,
+            fecha: funcion.fecha
+        };
+
+        boletos.push(nuevoBoleto);
+        reservaciones.splice(index, 1);
+        res.redirect('/boletos');
+    } else {
+        res.send("No se pudo procesar la reservacion");
+    }
 }
 
+
+}
 
 module.exports = new cineController();

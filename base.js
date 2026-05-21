@@ -18,5 +18,33 @@ let boletos = [
     { id: "d3b1b6d0-6f8d-4e92-9b21-4f1e9b2c5e4a", peliculaId: "123e4567-e89b-12d3-a456-426614174000", salaId: "550e8400-e29b-41d4-a716-446655440000", fecha: "2026-05-21" }
 ];
 
+//Entidad funciones
+let funciones = [
+    {
+        id: "f1b2c3d4-e5f6-7a8b-9c0d-11e12f13g14h",
+        peliculaId: "123e4567-e89b-12d3-a456-426614174000", 
+        salaId: "550e8400-e29b-41d4-a716-446655440000",        
+        fecha: "2026-05-20",
+        hora: "19:30",
+        disponibilidad: 100 
+    }
+];
 
-module.exports = { peliculas, salas, boletos };
+//Entidad reservaciones
+let reservaciones = [
+    {
+        id: "r1a2b3c4-d5e6-7f8g-9h0i-11j12k13l14m",
+        funcionId: "f1b2c3d4-e5f6-7a8b-9c0d-11e12f13g14h", 
+        nombreCliente: "Carlos Mendoza",
+        asiento: "F-05",
+        estado: "RESERVADO" 
+    }
+];
+
+module.exports = {
+    peliculas,
+    salas,
+    boletos,
+    funciones,       
+    reservaciones   
+};
