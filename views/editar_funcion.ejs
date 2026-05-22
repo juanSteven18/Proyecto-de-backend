@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px;">
+
+    <div style="max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #17a2b8; padding-bottom: 10px; margin-top: 0;">
+            ✏️ Editar Función
+        </h2>
+        <p style="color: #666;">Modificando horario para: <strong><%= pelicula.titulo %></strong></p>
+
+        <form action="/funciones/actualizar/<%= funcion.id %>" method="POST">
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Sala Asignada:</label>
+                <select name="salaId" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+                    <% salas.forEach(sala => { %>
+                        <option value="<%= sala.id %>" <%= sala.id == funcion.salaId ? 'selected' : '' %>>
+                            <%= sala.nombre %> (Capacidad: <%= sala.capacidad %>)
+                        </option>
+                    <% }) %>
+                </select>
+                <small style="color: #888;">Nota: Si cambias la sala, el aforo se reiniciará a la capacidad total de la nueva sala.</small>
+            </div>
+
+            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Fecha:</label>
+                    <input type="date" name="fecha" value="<%= funcion.fecha %>" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Hora:</label>
+                    <input type="time" name="hora" value="<%= funcion.hora %>" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button type="submit" style="flex: 2; background: #17a2b8; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                    Guardar Cambios
+                </button>
+                <a href="/pelicula/<%= pelicula.id %>/funciones" style="flex: 1; text-align: center; background: #6c757d; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold;">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

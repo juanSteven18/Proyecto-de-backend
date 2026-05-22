@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-family: Arial, sans-serif;">
+        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
+        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
+        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
+    </nav>
+
+    <h1 style="font-family: Arial, sans-serif;"><%= title %></h1>
+    
+    <form action="/salas/actualizar/<%= sala.id %>" method="POST" style="font-family: Arial, sans-serif; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; max-width: 400px;">
+        <div>
+            <label>Identificador de la Sala:</label><br>
+            <input type="text" name="nombre" value="<%= sala.nombre %>" required style="padding: 6px; width: 90%; margin-top:5px;">
+        </div>
+        <br>
+        <div>
+            <label>Capacidad de Aforo:</label><br>
+            <input type="number" name="capacidad" value="<%= sala.capacidad %>" required style="padding: 6px; width: 50%; margin-top:5px;">
+        </div>
+        <br>
+        <button type="submit" style="padding: 8px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Guardar Cambios</button>
+        <a href="/salas" style="margin-left: 10px; color: #6c757d; text-decoration: none;">Cancelar</a>
+    </form>
+</body>
+</html>

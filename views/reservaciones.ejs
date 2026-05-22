@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px;">
+
+    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
+        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
+        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
+        <a href="/reservaciones" style="color: #28a745; margin-right: 20px; text-decoration: none; font-weight: bold;">📋 Ver Reservaciones</a>
+        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
+        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
+    </nav>
+
+    <h1 style="color: #2c3e50; border-bottom: 2px solid #28a745; padding-bottom: 10px;"><%= title %></h1>
+
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: #2c3e50;">Lista de Apartados Pendientes</h3>
+        
+        <% if (listaReservaciones && listaReservaciones.length > 0) { %>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="background-color: #28a745; color: white; text-align: left;">
+                        <th style="padding: 12px; border: 1px solid #ddd;">Cliente</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Película</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Sala</th>
+                        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Asiento</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Horario</th>
+                        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Estado</th>
+                        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Acciones de Taquilla</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% listaReservaciones.forEach(reserva => { %>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 12px; font-weight: bold;"><%= reserva.nombreCliente %></td>
+                            <td style="padding: 12px;"><%= reserva.tituloPelicula %></td>
+                            <td style="padding: 12px;"><%= reserva.nombreSala %></td>
+                            <td style="padding: 12px; text-align: center; font-family: monospace; font-size: 14px;"><%= reserva.asiento %></td>
+                            <td style="padding: 12px; font-size: 13px;">
+                                📅 <%= reserva.fecha %> <br> 🕒 <%= reserva.hora %>
+                            </td>
+                            <td style="padding: 12px; text-align: center;">
+                                <span style="background: #ffc107; color: #333; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold;">
+                                    <%= reserva.estado %>
+                                </span>
+                            </td>
+                            <td style="padding: 12px; text-align: center;">
+                                <a href="/reservaciones/concretar/<%= reserva.id %>" style="background: #28a745; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-right: 5px; display: inline-block;">
+                                    💵 Cobrar y Emitir
+                                </a>
+
+                                <span style="color: #ccc;">|</span>
+
+                                <a href="/reservaciones/editar/<%= reserva.id %>" style="margin: 0 5px; color: #17a2b8; text-decoration: none; font-weight: bold; font-size: 13px;">✏️ Editar</a>
+                                
+                                <span style="color: #ccc;">|</span>
+                                
+                                <a href="/reservaciones/eliminar/<%= reserva.id %>" style="margin: 0 5px; color: #dc3545; text-decoration: none; font-weight: bold; font-size: 13px;" onclick="return confirm('¿Seguro que deseas cancelar esta reservación? El asiento se liberará.')">❌ Cancelar</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p style="color: #7f8c8d; font-style: italic; text-align: center; padding: 20px;">No hay reservaciones pendientes por procesar.</p>
+        <% } %>
+    </div>
+
+</body>
+</html>

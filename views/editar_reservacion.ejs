@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px;">
+
+    <div style="max-width: 500px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; border-bottom: 2px solid #28a745; padding-bottom: 10px; margin-top: 0;">
+            ✏️ Editar Reservación
+        </h2>
+        <p style="color: #666; font-size: 14px;">ID de Reserva: <code style="background: #eee; padding: 2px 5px;"><%= reservacion.id %></code></p>
+
+        <form action="/reservaciones/actualizar/<%= reservacion.id %>" method="POST">
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Nombre del Cliente:</label>
+                <input type="text" name="nombreCliente" value="<%= reservacion.nombreCliente %>" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">Número de Asiento / Butaca:</label>
+                <input type="text" name="asiento" value="<%= reservacion.asiento %>" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; text-transform: uppercase;">
+                <small style="color: #888;">Ejemplo: F-12, A-01, H-05</small>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button type="submit" style="flex: 2; background: #28a745; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                    Actualizar Reserva
+                </button>
+                <a href="/reservaciones" style="flex: 1; text-align: center; background: #6c757d; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold;">
+                    Volver
+                </a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
