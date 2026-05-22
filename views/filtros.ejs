@@ -5,50 +5,64 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-    <h1>🔍 Filtrar por Rango de Fechas</h1>
+    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-family: Arial, sans-serif;">
+        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
+        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
+        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
+        <a href="/reservaciones" style="color: #28a745; margin-right: 20px; text-decoration: none; font-weight: bold;">📋 Ver Reservaciones</a>
+        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
+        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
+    </nav>
 
-    <form action="/filtros/fechas" method="GET" style="background: #f4f4f4; padding: 20px; border-radius: 8px;">
-        <label>Desde:</label>
-        <input type="date" name="inicio" required>
-        
-        <label>Hasta:</label>
-        <input type="date" name="fin" required>
-        
-        <button type="submit">Filtrar</button>
-        <a href="/">Limpiar</a>
-    </form>
+    <h1 style="font-family: Arial, sans-serif;">🔍 Filtrar Ventas por Rango de Fechas</h1>
 
-    <hr>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #dee2e6; font-family: Arial, sans-serif;">
+        <form action="/filtros/fechas" method="GET" style="display: flex; gap: 15px; align-items: center;">
+            <div>
+                <label>Desde: </label>
+                <input type="date" name="inicio" required style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+            </div>
+            <div>
+                <label>Hasta: </label>
+                <input type="date" name="fin" required style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+            </div>
+            <button type="submit" style="padding: 6px 12px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Filtrar</button>
+            <a href="/filtros/fechas" style="color: #6c757d; text-decoration: none; font-size: 0.9em;">Limpiar</a>
+        </form>
+    </div>
 
     <% if (busqueda) { %>
-        <h2>Resultados entre <%= rango.inicio %> y <%= rango.fin %></h2>
-        <% if (lista.length > 0) { %>
-            <table border="1" width="100%">
-                <thead>
+        <h2 style="font-family: Arial, sans-serif;">Resultados entre <%= rango.inicio %> y <%= rango.fin %></h2>
+        
+        <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; margin-top: 15px;">
+            <thead>
+                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6; text-align: left;">
+                    <th style="padding: 12px;">Película</th>
+                    <th style="padding: 12px;">Sala</th>
+                    <th style="padding: 12px;">Asiento</th>
+                    <th style="padding: 12px;">Fecha de Función</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (lista.length === 0) { %>
                     <tr>
-                        <th>Producto</th>
-                        <th>Categoría</th>
-                        <th>Fecha</th>
+                        <td colspan="4" style="padding: 20px; text-align: center; color: #6c757d;">No se encontraron boletos vendidos en este rango de fechas.</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <% lista.forEach(p => { %>
-                        <tr>
-                            <td><%= p.nombre %></td>
-                            <td><%= p.categoria %></td>
-                            <td><%= p.fecha %></td>
+                <% } else { %>
+                    <% lista.forEach((boleto) => { %>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 12px;"><strong>🎬 <%= boleto.tituloPelicula %></strong></td>
+                            <td style="padding: 12px;">🏢 <%= boleto.nombreSala %></td>
+                            <td style="padding: 12px;"><span style="background: #fff3cd; color: #856404; padding: 3px 6px; border-radius: 4px; font-weight: bold;"><%= boleto.asiento %></span></td>
+                            <td style="padding: 12px; color: #555;"><%= boleto.fecha %></td>
                         </tr>
                     <% }) %>
-                </tbody>
-            </table>
-        <% } else { %>
-            <p>No se encontraron productos en este rango.</p>
-        <% } %>
-    <% } else { %>
-        <p>Selecciona un rango de fechas para comenzar.</p>
+                <% } %>
+            </tbody>
+        </table>
     <% } %>
 
     <br>
-    <a href="/">⬅ Volver al Panel Principal</a>
+    <a href="/" style="color: #007bff; text-decoration: none; font-weight: bold; font-family: Arial, sans-serif;">← Volver al Panel Principal</a>
 </body>
 </html>
