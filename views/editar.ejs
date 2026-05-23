@@ -1,33 +1,37 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
-
 <body>
+    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-family: Arial, sans-serif;">
+        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
+        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
+        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
+        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
+        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
+    </nav>
+
     <h1><%= title %></h1>
-    <!-- El action incluye el ID para saber cuál editar -->
-    <form action="/actualizar/<%= pelicula.id %>" method="POST">
+    <form action="/actualizar/<%= pelicula.id %>" method="POST" style="font-family: Arial, sans-serif;">
         <div>
-            <label>Titulo:</label>
-            <input type="text" name="titulo" value="<%= pelicula.titulo %>" required>
+            <label>Título:</label><br>
+            <input type="text" name="titulo" value="<%= pelicula.titulo %>" required style="padding: 6px; width: 300px; margin-top:5px;">
         </div>
         <br>
         <div>
-            <label>Duracion:</label>
-            <input type="number" name="duracion" value="<%= pelicula.duracion %>" required>
+            <label>Duración:</label><br>
+            <input type="number" name="duracion" value="<%= pelicula.duracion %>" required style="padding: 6px; width: 100px; margin-top:5px;">
         </div>
         <br>
         <div>
-            <label>Genero:</label>
-            <input type="text" name="genero" value="<%= pelicula.genero %>" required>
+            <label>Género:</label><br>
+            <input type="text" name="genero" value="<%= pelicula.genero %>" required style="padding: 6px; width: 300px; margin-top:5px;">
         </div>
         <br>
-        <button type="submit">Guardar Cambios</button>
-        <a href="/">Cancelar</a>
+        <button type="submit" style="padding: 8px 15px; background: #007bff; color: white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Guardar Cambios</button>
+        <a href="/" style="margin-left: 10px; color: #6c757d; text-decoration: none;">Cancelar</a>
     </form>
 </body>
-
 </html>

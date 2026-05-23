@@ -246,6 +246,7 @@ guardarFuncion(req, res) {
         hora: hora,
         disponibilidad: capacidadInicial
     };
+    
 
     funciones.push(nuevaFuncion);
     res.redirect('/pelicula/' + peliculaId + '/funciones');

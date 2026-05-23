@@ -5,15 +5,23 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-    <h1><%= pelicula.titulo %></h1>
-    <div style="border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
-        <p><strong>ID:</strong> <%= pelicula.id %></p>
-        <p><strong>Titulo:</strong> <%= pelicula.titulo%></p>
-        <p><strong>Duracion:</strong> <%= pelicula.duracion %></p>
-        <p><strong>genero:</strong> <%= pelicula.genero %></p>
+    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-family: Arial, sans-serif;">
+        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
+        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
+        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
+        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
+        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
+    </nav>
+
+    <h1>Ficha Técnica: <%= pelicula.titulo %></h1>
+    <div style="border: 1px solid #ccc; padding: 20px; border-radius: 8px; font-family: Arial, sans-serif; background: #fafafa;">
+        <p><strong>Código Único (ID):</strong> <code style="background:#eee; padding:2px 5px;"><%= pelicula.id %></code></p>
+        <p><strong>Título Oficial:</strong> <%= pelicula.titulo%></p>
+        <p><strong>Tiempo de Duración:</strong> <%= pelicula.duracion %> minutos</p>
+        <p><strong>Categoría / Género:</strong> <%= pelicula.genero %></p>
     </div>
     <br>
-    <a href="/">⬅ Volver al listado</a>
-    <a href="/editar/<%= pelicula.id %>">✏️ Editar</a>
+    <a href="/" style="padding: 6px 12px; background:#6c757d; color:white; text-decoration:none; border-radius:4px;">⬅ Volver al listado</a>
+    <a href="/editar/<%= pelicula.id %>" style="padding: 6px 12px; background:#28a745; color:white; text-decoration:none; border-radius:4px; margin-left:10px;">✏️ Editar Película</a>
 </body>
 </html>
