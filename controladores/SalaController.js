@@ -3,7 +3,7 @@ const { Sala } = require('../models');
 
 class SalaController {
 
-    // 1. VER LISTA DE SALAS (Hibrido: Vista HTML o API JSON)
+    // 1. VER LISTA DE SALAS 
     async listarSalas(req, res) {
         try {
             // Consultamos todas las salas de la base de datos
@@ -28,7 +28,7 @@ class SalaController {
         res.render('crearSala', { title: 'Anadir Nueva Sala' });
     }
 
-    // 3. GUARDAR SALA (POST - Insercion Real)
+    // 3. GUARDAR SALA 
     async guardarSala(req, res) {
         try {
             const { nombre, capacidad } = req.body;
@@ -61,7 +61,7 @@ class SalaController {
         }
     }
 
-    // 5. ACTUALIZAR SALA (POST/PUT - Modificacion Real)
+    // 5. ACTUALIZAR SALA 
     async actualizarSala(req, res) {
         try {
             const { id } = req.params;
@@ -82,7 +82,7 @@ class SalaController {
         }
     }
 
-    // 6. ELIMINAR SALA (Borrado Fisico Real)
+    // 6. ELIMINAR SALA 
     async eliminarSala(req, res) {
         try {
             const { id } = req.params;
