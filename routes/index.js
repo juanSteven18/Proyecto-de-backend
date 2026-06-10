@@ -1,52 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const cineController = require('../controladores/cine_control');
 
-// VER
-router.get('/', cineController.listar);
-router.get('/salas', cineController.listarSalas);
-router.get('/boletos', cineController.listarBoletos);
-router.get('/pelicula/:id/funciones', cineController.listarFuncionesPorPelicula);
-router.get('/reservaciones', cineController.listarReservaciones);
-router.get('/pelicula/:id', cineController.verDetalle);
+// Importamos todos los controladores de la nueva arquitectura
+const peliculaController = require('../controladores/PeliculaController');
+const salaController = require('../controladores/SalaController');
+const boletoController = require('../controladores/BoletoController');
 
-// EDITAR
-router.get('/funciones/editar/:id', cineController.editarFuncionForm);
-router.get('/reservaciones/editar/:id', cineController.editarReservacionForm);
+// ====== ENTIDAD: PELÍCULAS ======
+router.get('/', peliculaController.listar);
+router.get('/crear', peliculaController.vistaCrear);
+router.get('/editar/:id', peliculaController.vistaEditar);
+router.post('/peliculas/guardar', peliculaController.almacenar);
+router.put('/actualizar/:id', peliculaController.actualizar);
+router.delete('/eliminar/:id', peliculaController.eliminar);
+router.get('/top5', peliculaController.top5); // <-- Vincula el Top 5
 
-// VISTASEDITAR
-router.get('/crear', cineController.vistaCrear);
-router.get('/editar/:id', cineController.vistaEditar);
-router.get('/salas/editar/:id', cineController.vistaEditarSala);   
-router.get('/boletos/editar/:id', cineController.vistaEditarBoleto);
+// ====== ENTIDAD: SALAS ======
+router.get('/salas', salaController.listarSalas);
+router.get('/salas/crear', salaController.vistaCrearSala);
+router.get('/salas/editar/:id', salaController.vistaEditarSala);
+router.post('/salas/guardar', salaController.guardarSala);
+router.put('/salas/actualizar/:id', salaController.actualizarSala);
+router.delete('/salas/eliminar/:id', salaController.eliminarSala);
 
-// GUARDAR
-router.post('/peliculas/guardar', cineController.almacenar);
-router.post('/salas/guardar', cineController.guardarSala);
-router.post('/boletos/guardar', cineController.guardarBoleto);
-router.post('/funciones/guardar', cineController.guardarFuncion);
-router.post('/reservaciones/guardar', cineController.guardarReservacion);
-
-// ACTUALIZAR
-router.post('/actualizar/:id', cineController.actualizar);
-router.post('/salas/actualizar/:id', cineController.actualizarSala);
-router.post('/boletos/actualizar/:id', cineController.actualizarBoleto);
-router.post('/funciones/actualizar/:id', cineController.actualizarFuncion);
-router.post('/reservaciones/actualizar/:id', cineController.actualizarReservacion);
-
-// ELIMINAR
-router.get('/eliminar/:id', cineController.eliminar);
-router.get('/salas/eliminar/:id', cineController.eliminarSala);
-router.get('/boletos/eliminar/:id', cineController.eliminarBoleto);
-router.get('/funciones/eliminar/:id', cineController.eliminarFuncion);
-router.get('/reservaciones/eliminar/:id', cineController.eliminarReservacion);
-
-// FUNCIONES ADICIONALES
-router.get('/buscar', cineController.buscarPorNombre);
-router.get('/top5', cineController.verTop5);                  
-router.get('/filtros/fechas', cineController.filtrarPorRango); 
-router.get('/reservaciones/concretar/:id', cineController.concretarReservacion);
-
-// SUGERENCIA: Para cumplir estrictamente con los estandares REST, las rutas de Actualizar deberian usar router.put() y las de Eliminar router.delete(). Como los formularios HTML puros solo soportan GET y POST, mantuvimos POST/GET, pero mencionarselo al profesor sumara puntos en tu defensa.
+// ====== ENTIDAD: BOLETOS, RESERVACIONES Y FILTROS ======
+router.get('/boletos', boletoController.listarBoletos);
+router.get('/reservaciones', boletoController.listarReservaciones);
+router.get('/filtros/fechas', boletoController.vistaFiltros);
+router.post('/filtros/buscar', boletoController.procesarFiltro);
 
 module.exports = router;

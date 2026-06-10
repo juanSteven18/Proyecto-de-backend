@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-family: Arial, sans-serif;">
+        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
+        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
+        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
+        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
+        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
+    </nav>
+
+    <h1><%= title %></h1>
+    <form action="/salas/guardar" method="POST" style="font-family: Arial, sans-serif;">
+        <div>
+            <label>Nombre de la Sala:</label><br>
+            <input type="text" name="titulo" required style="padding: 6px; width: 300px; margin-top:5px;">
+        </div>
+        <br>
+        <div>
+            <label>Capacidad de Asientos:</label><br>
+            <input type="number" name="duracion" required style="padding: 6px; width: 100px; margin-top:5px;">
+        </div>
+        <br>
+         <div>
+            <label>Género Cinematográfico:</label><br>
+            <input type="text" name="genero" required style="padding: 6px; width: 300px; margin-top:5px;">
+        </div>
+        <br>
+        <button type="submit" style="padding: 8px 15px; background: #28a745; color: white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Guardar Película</button>
+        <a href="/" style="margin-left: 10px; color: #6c757d; text-decoration: none;">Cancelar</a>
+    </form>
+</body>
+</html>
