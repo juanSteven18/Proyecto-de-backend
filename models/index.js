@@ -11,16 +11,20 @@ const sequelize = new Sequelize({
 // 2. Importar e inicializar los modelos
 const Pelicula = require('./Pelicula')(sequelize);
 const Sala = require('./Sala')(sequelize);
-const Funcion = require('./Funcion')(sequelize); // <--- Importamos Funcion
+const Funcion = require('./Funcion')(sequelize);
+const Boleto = require('./Boleto')(sequelize); // <--- Importamos Boleto
 
 // 3. Declarar las Relaciones (Asociaciones)
-// Una Funcion pertenece a una Pelicula (Crea PeliculaId en la tabla funciones)
+// Relaciones: Funcion <-> Pelicula / Sala
 Funcion.belongsTo(Pelicula, { foreignKey: 'peliculaId', as: 'pelicula' });
 Pelicula.hasMany(Funcion, { foreignKey: 'peliculaId', as: 'funciones' });
 
-// Una Funcion pertenece a una Sala (Crea SalaId en la tabla funciones)
 Funcion.belongsTo(Sala, { foreignKey: 'salaId', as: 'sala' });
 Sala.hasMany(Funcion, { foreignKey: 'salaId', as: 'funciones' });
+
+// Nueva Relacion: Boleto <-> Funcion (Crea funcionId en la tabla boletos)
+Boleto.belongsTo(Funcion, { foreignKey: 'funcionId', as: 'funcion' });
+Funcion.hasMany(Boleto, { foreignKey: 'funcionId', as: 'boletos' });
 
 
 // 4. Probar conexion y Sincronizar Base de Datos
@@ -30,19 +34,19 @@ Sala.hasMany(Funcion, { foreignKey: 'salaId', as: 'funciones' });
         console.log('============= BASE DE DATOS =============');
         console.log('[BD] Conexion establecida con exito con SQLite.');
         
-        // Sincroniza y altera las tablas existentes para inyectar las llaves foraneas
+        // Sincroniza e inyecta la nueva tabla de boletos en el archivo fisico
         await sequelize.sync({ alter: true });
-        console.log('[BD] Tablas e indices (incluyendo Relaciones) sincronizados.');
+        console.log('[BD] Modulo de Boletos sincronizado correctamente.');
         console.log('=========================================');
     } catch (error) {
         console.error('[BD] Error en el ciclo de la Base de Datos:', error);
     }
 })();
 
-// Exportamos todo el ecosistema de modelos
 module.exports = {
     sequelize,
     Pelicula,
     Sala,
-    Funcion
+    Funcion,
+    Boleto // <--- Exportamos Boleto
 };
