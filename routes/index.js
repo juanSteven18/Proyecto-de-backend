@@ -5,6 +5,7 @@ const router = express.Router();
 const peliculaController = require('../controladores/PeliculaController');
 const salaController = require('../controladores/SalaController');
 const boletoController = require('../controladores/BoletoController');
+const funcionController = require('../controladores/FuncionController');
 
 // ====== ENTIDAD: PELÍCULAS ======
 router.get('/', peliculaController.listar);
@@ -23,10 +24,23 @@ router.post('/salas/guardar', salaController.guardarSala);
 router.put('/salas/actualizar/:id', salaController.actualizarSala);
 router.get('/salas/eliminar/:id', salaController.eliminarSala);
 
+// ====== ENTIDAD: FUNCIONES ======
+router.get('/funciones', funcionController.listar);
+router.get('/funciones/crear', funcionController.vistaCrear);
+router.post('/funciones/guardar', funcionController.almacenar);
+router.get('/funciones/eliminar/:id', funcionController.eliminar)
+router.get('/pelicula/:id', funcionController.listarPorPelicula);
+router.get('/pelicula/:id/funciones', funcionController.listarPorPelicula);
+
+
 // ====== ENTIDAD: BOLETOS, RESERVACIONES Y FILTROS ======
 router.get('/boletos', boletoController.listarBoletos);
-router.get('/reservaciones', boletoController.listarReservaciones);
-router.get('/filtros/fechas', boletoController.vistaFiltros);
-router.post('/filtros/buscar', boletoController.procesarFiltro);
+router.get('/reservaciones', boletoController.listarReservaciones); // ¡Reactivado con éxito!
+router.post('/boletos/guardar', boletoController.almacenarBoleto);
+router.get('/boletos/eliminar/:id', boletoController.eliminar);
+
+// ====== FILTROS ======
+//router.get('/filtros/fechas', boletoController.vistaFiltros);
+//router.post('/filtros/buscar', boletoController.procesarFiltro);
 
 module.exports = router;
