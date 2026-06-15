@@ -35,35 +35,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% listaReservaciones.forEach(reserva => { %>
-                        <tr style="border-bottom: 1px solid #ddd;">
-                            <td style="padding: 12px; font-weight: bold;"><%= reserva.nombreCliente %></td>
-                            <td style="padding: 12px;"><%= reserva.tituloPelicula %></td>
-                            <td style="padding: 12px;"><%= reserva.nombreSala %></td>
-                            <td style="padding: 12px; text-align: center; font-family: monospace; font-size: 14px;"><%= reserva.asiento %></td>
-                            <td style="padding: 12px; font-size: 13px;">
-                                📅 <%= reserva.fecha %> <br> 🕒 <%= reserva.hora %>
-                            </td>
-                            <td style="padding: 12px; text-align: center;">
-                                <span style="background: #ffc107; color: #333; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold;">
-                                    <%= reserva.estado %>
-                                </span>
-                            </td>
-                            <td style="padding: 12px; text-align: center;">
-                                <a href="/reservaciones/concretar/<%= reserva.id %>" style="background: #28a745; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-right: 5px; display: inline-block;">
-                                    💵 Cobrar y Emitir
-                                </a>
-
-                                <span style="color: #ccc;">|</span>
-
-                                <a href="/reservaciones/editar/<%= reserva.id %>" style="margin: 0 5px; color: #17a2b8; text-decoration: none; font-weight: bold; font-size: 13px;">✏️ Editar</a>
-                                
-                                <span style="color: #ccc;">|</span>
-                                
-                                <a href="/reservaciones/eliminar/<%= reserva.id %>" style="margin: 0 5px; color: #dc3545; text-decoration: none; font-weight: bold; font-size: 13px;" onclick="return confirm('¿Seguro que deseas cancelar esta reservación? El asiento se liberará.')">❌ Cancelar</a>
-                            </td>
-                        </tr>
-                    <% }) %>
+                   <% listaReservaciones.forEach(reservacion => { %>
+    <tr>
+        <td><%= reservacion.nombreCliente %></td>
+        <td>🎬 <%= reservacion.funcion && reservacion.funcion.pelicula ? reservacion.funcion.pelicula.titulo : 'Sin Película' %></td>
+        <td>🏢 <%= reservacion.funcion && reservacion.funcion.sala ? reservacion.funcion.sala.nombre : 'Sin Sala' %></td>
+        <td>🎟️ <%= reservacion.cantidadAsientos %></td>
+        <td>📅 <%= reservacion.funcion ? reservacion.funcion.fecha : 'Sin Horario' %></td>
+        <td><span class="estado-pendiente">🟡 Pendiente</span></td>
+        <td>
+            <a href="/boletos/confirmar/<%= reservacion.id %>" class="btn-cobrar">💵 Cobrar y Emitir</a>
+            <a href="/boletos/eliminar/<%= reservacion.id %>" class="btn-cancelar">❌ Cancelar</a>
+        </td>
+    </tr>
+<% }) %>
                 </tbody>
             </table>
         <% } else { %>
