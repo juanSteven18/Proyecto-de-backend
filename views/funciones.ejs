@@ -2,110 +2,108 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px;">
+<body style="font-family: Arial, sans-serif; margin: 20px; background-color: #f8f9fa;">
 
-    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
-        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
-        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
-        <a href="/reservaciones" style="color: #28a745; margin-right: 20px; text-decoration: none; font-weight: bold;">📋 Ver Reservaciones</a>
-        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
-        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
+    <nav style="background-color: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <a href="/" style="color: white; text-decoration: none; margin-right: 15px; font-weight: bold;">🎬 Peliculas</a>
+        <a href="/salas" style="color: white; text-decoration: none; margin-right: 15px; font-weight: bold;">🏢 Salas</a>
+        <a href="/funciones" style="color: white; text-decoration: none; margin-right: 15px; font-weight: bold;">🎟️ Funciones</a>
     </nav>
 
-    <div style="margin-bottom: 15px;">
-        <a href="/" style="color: #007bff; text-decoration: none; font-weight: bold;">← Volver a Cartelera</a>
-    </div>
-
-    <h1 style="color: #2c3e50; border-bottom: 2px solid #34495e; padding-bottom: 10px;"><%= title %></h1>
-
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px;">
-        <h3 style="margin-top: 0; color: #2c3e50;">Asignar Nuevo Horario / Función</h3>
-        <form action="/funciones/guardar" method="POST" style="display: flex; flex-wrap: wrap; gap: 15px;">
-            
-            <input type="hidden" name="peliculaId" value="<%= pelicula.id %>">
-
-            <div style="flex: 1; min-width: 200px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Seleccionar Sala:</label>
-                <select name="salaId" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: white;">
-                    <option value="" disabled selected>-- Seleccione una Sala --</option>
-                    <% salas.forEach(sala => { %>
-                        <option value="<%= sala.id %>"><%= sala.nombre %> (Capacidad: <%= sala.capacidad %>)</option>
+    <h2><%= title %></h2>
+    
+    <div style="background-color: white; padding: 20px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #ddd;">
+        <h3 style="margin-top: 0; color: #333;">Programar Nueva Funcion</h3>
+        
+        <form action="/funciones/guardar" method="POST" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
+            <div>
+                <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Pelicula:</label>
+                <select name="peliculaId" required style="padding: 8px; width: 220px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="">-- Seleccione --</option>
+                    <% peliculas.forEach(peli => { %>
+                        <option value="<%= peli.id %>"><%= peli.titulo %></option>
                     <% }) %>
                 </select>
             </div>
-            
-            <div style="flex: 1; min-width: 150px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Fecha:</label>
-                <input type="date" name="fecha" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+
+            <div>
+                <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Sala:</label>
+                <select name="salaId" required style="padding: 8px; width: 180px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="">-- Seleccione --</option>
+                    <% salas.forEach(sala => { %>
+                        <option value="<%= sala.id %>"><%= sala.nombre %> (Cap: <%= sala.capacidad %>)</option>
+                    <% }) %>
+                </select>
             </div>
 
-            <div style="flex: 1; min-width: 150px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Hora:</label>
-                <input type="time" name="hora" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            <div>
+                <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Fecha:</label>
+                <input type="date" name="fecha" required style="padding: 8px; width: 140px; border: 1px solid #ccc; border-radius: 4px;">
             </div>
 
-            <div style="width: 100%;">
-                <button type="submit" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer;">Crear Función</button>
+            <div>
+                <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Hora:</label>
+                <input type="time" name="hora" required style="padding: 8px; width: 100px; border: 1px solid #ccc; border-radius: 4px;">
             </div>
+
+            <div>
+                <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Precio ($):</label>
+                <input type="number" step="0.01" name="precio" required style="padding: 8px; width: 90px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+
+            <button type="submit" style="padding: 9px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Anadir Funcion</button>
         </form>
     </div>
 
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <h3 style="margin-top: 0; color: #2c3e50;">Horarios Programados</h3>
-        
-        <% if (listaFunciones && listaFunciones.length > 0) { %>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                <thead>
-                    <tr style="background-color: #34495e; color: white; text-align: left;">
-                        <th style="padding: 12px; border: 1px solid #ddd;">Sala</th>
-                        <th style="padding: 12px; border: 1px solid #ddd;">Fecha</th>
-                        <th style="padding: 12px; border: 1px solid #ddd;">Hora</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Disponibilidad</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Acciones</th>
+    <h3 style="color: #333;">Listado de Horarios en Cartelera</h3>
+    <% if (listaFunciones && listaFunciones.length > 0) { %>
+        <table style="width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <thead>
+                <tr style="background-color: #007bff; color: white; text-align: left;">
+                    <th style="padding: 12px; border: 1px solid #ddd;">Pelicula</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Sala</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Fecha</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Hora</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Precio</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Disponibilidad</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% listaFunciones.forEach(funcion => { %>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #ddd;">
+                            <% if (funcion.pelicula) { %>
+                                <%= funcion.pelicula.titulo %>
+                            <% } else { %>
+                                No asignada
+                            <% } %>
+                        </td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">
+                            <% if (funcion.sala) { %>
+                                <%= funcion.sala.nombre %>
+                            <% } else { %>
+                                No asignada
+                            <% } %>
+                        </td>
+                        <td style="padding: 12px; border: 1px solid #ddd;"><%= funcion.fecha %></td>
+                        <td style="padding: 12px; border: 1px solid #ddd;"><%= funcion.hora %></td>
+                        <td style="padding: 12px; border: 1px solid #ddd;"><%= funcion.precio %>$</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;"><%= funcion.disponibilidad %> asientos</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">
+                            <a href="/funciones/eliminar/<%= funcion.id %>" style="color: #dc3545; text-decoration: none; font-weight: bold;">❌ Eliminar</a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <% listaFunciones.forEach(funcion => { %>
-                        <tr style="border-bottom: 1px solid #ddd;">
-                            <td style="padding: 12px; font-weight: bold;"><%= funcion.nombreSala %></td>
-                            <td style="padding: 12px;"><%= funcion.fecha %></td>
-                            <td style="padding: 12px;"><%= funcion.hora %></td>
-                            <td style="padding: 12px; text-align: center;">
-                                <span style="background: <%= funcion.disponibilidad > 0 ? '#28a745' : '#dc3545' %>; color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px; font-weight: bold;">
-                                    <%= funcion.disponibilidad %> butacas libres
-                                </span>
-                            </td>
-                            <td style="padding: 12px; text-align: center;">
-    <form action="/boletos/guardar" method="POST" style="display: inline; margin-right: 10px;">
-        <input type="hidden" name="funcionId" value="<%= funcion.id %>">
-        <input type="hidden" name="asiento" value="Autogenerado">
-        <button type="submit" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;" <%= funcion.disponibilidad <= 0 ? 'disabled' : '' %>>🎟️ Comprar</button>
-    </form>
-
-    <form action="/reservaciones/guardar" method="POST" style="display: inline-block; background: #e9ecef; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
-        <input type="hidden" name="funcionId" value="<%= funcion.id %>">
-        <input type="text" name="nombreCliente" placeholder="Cliente" required style="padding: 3px; font-size: 11px; width: 80px; border-radius: 3px; border: 1px solid #aaa;">
-        <input type="text" name="asiento" placeholder="Asiento" required style="padding: 3px; font-size: 11px; width: 50px; border-radius: 3px; border: 1px solid #aaa;">
-        <button type="submit" style="background: #ffc107; color: #333; border: none; padding: 4px 8px; border-radius: 3px; font-weight: bold; cursor: pointer; font-size: 11px;" <%= funcion.disponibilidad <= 0 ? 'disabled' : '' %>>📌 Reservar</button>
-    </form>
-
-    <span style="color: #ccc; margin: 0 5px;">|</span>
-    <a href="/funciones/editar/<%= funcion.id %>" style="color: #17a2b8; text-decoration: none; font-weight: bold; font-size: 13px;">✏️ Editar</a>
-    <span style="color: #ccc; margin: 0 5px;">|</span>
-    <a href="/funciones/eliminar/<%= funcion.id %>" style="color: #dc3545; text-decoration: none; font-weight: bold; font-size: 13px;" onclick="return confirm('¿Seguro que deseas eliminar esta función?')">❌ Eliminar</a>
-</td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        <% } else { %>
-            <p style="color: #7f8c8d; font-style: italic; text-align: center; padding: 20px;">No hay funciones asignadas para esta película todavía.</p>
-        <% } %>
-    </div>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 4px; border: 1px solid #ffeeba;">
+            No hay funciones programadas para mostrar en este segmento.
+        </div>
+    <% } %>
 
 </body>
 </html>
