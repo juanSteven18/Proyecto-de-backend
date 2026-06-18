@@ -14,31 +14,33 @@
     <h1 style="font-family: Arial, sans-serif;"><%= title %></h1>
 
     <form action="/boletos/actualizar/<%= boleto.id %>" method="POST" style="font-family: Arial, sans-serif; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; max-width: 450px;">
+        
         <div>
-            <label>Seleccionar Película:</label><br>
-            <select name="peliculaId" required style="padding: 6px; width: 95%; margin-top:5px;">
-                <% peliculas.forEach(peli => { %>
-                    <option value="<%= peli.id %>" <%= peli.id == boleto.peliculaId ? 'selected' : '' %>><%= peli.titulo %></option>
+            <label>Nombre del Cliente:</label><br>
+            <input type="text" name="nombreCliente" value="<%= boleto.nombreCliente %>" required style="padding: 6px; width: 95%; margin-top:5px; border: 1px solid #ced4da; border-radius: 4px;">
+        </div>
+        <br>
+
+        <div>
+            <label>Cantidad de Asientos:</label><br>
+            <input type="number" name="cantidadAsientos" value="<%= boleto.cantidadAsientos %>" min="1" required style="padding: 6px; width: 95%; margin-top:5px; border: 1px solid #ced4da; border-radius: 4px;">
+        </div>
+        <br>
+
+        <div>
+            <label>Seleccionar Función:</label><br>
+            <select name="funcionId" required style="padding: 6px; width: 95%; margin-top:5px; border: 1px solid #ced4da; border-radius: 4px;">
+                <% funciones.forEach(func => { %>
+                    <option value="<%= func.id %>" <%= func.id == boleto.funcionId ? 'selected' : '' %>>
+                        <%= func.pelicula ? func.pelicula.titulo : 'Película sin título' %> — 
+                        <%= func.sala ? func.sala.nombre : 'Sala sin nombre' %> 
+                        (<%= func.horario %>)
+                    </option>
                 <% }) %>
             </select>
         </div>
         <br>
-        <div>
-            <label>Seleccionar Sala:</label><br>
-            <select name="salaId" required style="padding: 6px; width: 95%; margin-top:5px;">
-                <% salas.forEach(sala => { %>
-                    <option value="<%= sala.id %>" <%= sala.id == boleto.salaId ? 'selected' : '' %>><%= sala.nombre %></option>
-                <% }) %>
-            </select>
-        </div>
-        <br>
-    
-      
-        <div>
-            <label>Fecha de la Función:</label><br>
-            <input type="date" name="fecha" value="<%= boleto.fecha %>" required style="padding: 6px; width: 60%; margin-top:5px;">
-        </div>
-        <br>
+        
         <button type="submit" style="padding: 8px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Actualizar Boleto</button>
         <a href="/boletos" style="margin-left: 10px; color: #6c757d; text-decoration: none;">Cancelar</a>
     </form>

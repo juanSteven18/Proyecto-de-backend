@@ -1,11 +1,12 @@
-const { Funcion, Pelicula, Sala } = require('../models');
+const { Funcion, Pelicula, Sala, Boleto } = require('../models');
+const { Op } = require('sequelize');
 
 class FuncionController {
 
-    // 1. VISTA PRINCIPAL: LISTAR FUNCIONES Y CARGAR FORMULARIO (Todo en uno)
-    async listar(req, res) {
+//VISTA PRINCIPAL
+async listar(req, res) {
         try {
-            // 1. Buscamos todas las funciones con sus relaciones (JOIN)
+            //Buscamos todas las funciones con sus relaciones
             const funciones = await Funcion.findAll({
                 include: [
                     { model: Pelicula, as: 'pelicula' },
@@ -13,7 +14,7 @@ class FuncionController {
                 ]
             });
 
-            // 2. Buscamos las peliculas y salas para alimentar el formulario de arriba
+            //Buscamos las peliculas y salas para alimentar el formulario de arriba
             const peliculas = await Pelicula.findAll();
             const salas = await Sala.findAll();
 
@@ -25,27 +26,28 @@ class FuncionController {
             res.render('funciones', {
                 title: 'Gestion de Funciones (Base de Datos)',
                 listaFunciones: funciones,
-                peliculas, // Lista para el select del formulario
-                salas      // Lista para el select del formulario
+                peliculas, 
+                salas      
             });
         } catch (error) {
             console.error("Error al listar funciones:", error);
             res.status(500).json({ status: "error", message: "Error interno en el servidor" });
         }
-    }
+}
 
-    async listarPorPelicula(req, res) {
+//LISTAR PELICULAS
+async listarPorPelicula(req, res) {
         try {
-            const { id } = req.params; // Captura el ID de la película desde la URL
+            const { id } = req.params; 
 
-            // 1. Buscamos los datos de la película para usar su título en la cabecera de la vista
+            //Buscamos los datos de la pelicula para usar su titulo en la cabecera de la vista
             const pelicula = await Pelicula.findByPk(id);
             
             if (!pelicula) {
-                return res.status(404).send("La película especificada no existe");
+                return res.status(404).send("La pelicula especificada no existe");
             }
 
-            // 2. Filtramos en la base de datos las funciones que le correspondan a esa película
+            //Filtramos en la base de datos las funciones que le correspondan a esa pelicula
             const listaFunciones = await Funcion.findAll({
                 where: { peliculaId: id },
                 include: [
@@ -54,10 +56,10 @@ class FuncionController {
                 ]
             });
 
-            // 3. Renderizamos la vista 'funciones' inyectando las variables requeridas
+            //Renderizamos la vista 'funciones'
             res.render('funciones', {
                 title: `Funciones para la Película: ${pelicula.titulo}`,
-                funciones: listaFunciones, // Enviamos el arreglo filtrado
+                funciones: listaFunciones, 
                 pelicula: pelicula
             });
 
@@ -65,16 +67,15 @@ class FuncionController {
             console.error("Error en listarPorPelicula:", error);
             res.status(500).send("Error interno al recuperar las funciones de la cartelera");
         }
-    }
+}
 
-    // 2. REDIRECCION SEGURA EN CASO DE ENTRAR A /CREAR
-    async vistaCrear(req, res) {
-        // Como ahora todo esta en la misma pagina, si alguien entra aqui, lo mandamos al index de funciones
+//RENDER PARA CREAR
+async vistaCrear(req, res) {
         res.redirect('/funciones');
-    }
+}
 
-    // 3. GUARDAR FUNCION (POST)
-    async almacenar(req, res) {
+//GUARDAR FUNCION 
+async almacenar(req, res) {
         try {
             const { peliculaId, salaId, fecha, hora, precio } = req.body;
 
@@ -101,10 +102,10 @@ class FuncionController {
             console.error("Error al guardar funcion:", error);
             res.status(500).json({ status: "error", message: "No se pudo guardar la funcion" });
         }
-    }
+}
 
-    // 4. ELIMINAR FUNCION (GET)
-    async eliminar(req, res) {
+//ELIMINAR FUNCION 
+async eliminar(req, res) {
         try {
             const { id } = req.params;
 
@@ -117,10 +118,10 @@ class FuncionController {
             console.error("Error al eliminar funcion:", error);
             res.status(500).json({ status: "error", message: "No se pudo eliminar la funcion" });
         }
-    }
+}
 
-    // 5. LISTAR FUNCIONES FILTRADAS POR PELICULA
-    async listarPorPelicula(req, res) {
+//LISTAR FUNCIONES FILTRADAS POR PELICULA
+async listarPorPelicula(req, res) {
         try {
             const { id } = req.params;
             const pelicula = await Pelicula.findByPk(id);
@@ -147,7 +148,74 @@ class FuncionController {
             console.error("Error al filtrar funciones:", error);
             res.status(500).send("Error interno al filtrar funciones");
         }
+}
+//FILTRO POR FECHAS
+ async filtrarPorFecha(req, res) {
+    try {
+        //Capturamos los nombres exactos de tus inputs en filtros.ejs
+        const { fechaInicio, fin } = req.query;
+
+       
+        // CASO 1:No ha filtrado nada
+       
+        if (!fechaInicio || !fin) {
+            return res.render('filtros', {
+                title: 'Filtrar Ventas',
+                busqueda: false,  
+                rango: { inicio: '', fin: '' },
+                lista: []
+            });
+        }
+
+       
+        // CASO 2: Filtrado 
+        const inicioDate = new Date(`${fechaInicio}T00:00:00`);
+        const finDate = new Date(`${fin}T23:59:59`);
+
+        // Buscamos los boletos creados en ese rango
+        const boletosDB = await Boleto.findAll({
+            where: {
+                createdAt: {
+                    [Op.between]: [inicioDate, finDate]
+                }
+            },
+            include: [
+                {
+                    model: Funcion,
+                    as: 'funcion',
+                    include: [
+                        { model: Pelicula, as: 'pelicula' },
+                        { model: Sala, as: 'sala' }
+                    ]
+                }
+            ]
+        });
+
+        const listaMapeada = boletosDB.map(b => {
+            return {
+                tituloPelicula: b.funcion && b.funcion.pelicula ? b.funcion.pelicula.titulo : 'Película Desconocida',
+                nombreSala: b.funcion && b.funcion.sala ? b.funcion.sala.nombre : 'Sin Sala',
+                asiento: b.cantidadAsientos, 
+                fecha: b.funcion ? b.funcion.fecha : 'Sin fecha' 
+            };
+        });
+
+     
+        res.render('filtros', {
+            title: 'Ventas Filtradas',
+            busqueda: true, 
+            rango: { 
+                inicio: fechaInicio, 
+                fin: fin 
+            },
+            lista: listaMapeada
+        });
+
+    } catch (error) {
+        console.error("ERROR EN EL FILTRO DE FECHAS:", error);
+        res.status(500).send("Error interno al filtrar: " + error.message);
     }
+}
 }
 
 module.exports = new FuncionController();

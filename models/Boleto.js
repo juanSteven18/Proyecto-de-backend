@@ -21,6 +21,11 @@ module.exports = (sequelize) => {
                 isInt: true,
                 min: 1
             }
+        },
+        estado: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'reservado' 
         }
     }, {
         tableName: 'boletos',

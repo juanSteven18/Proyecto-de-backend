@@ -1,21 +1,22 @@
 const { Boleto, Funcion, Pelicula, Sala } = require('../models'); 
+const { Op } = require('sequelize');
 
 class BoletoController {
 
-    // =========================================================
-    // LISTAR BOLETOS
-    // =========================================================
+// =========================================================
+// LISTAR BOLETOS
+// =========================================================
    async listarBoletos(req, res) {
     try {
-        // Colocamos el alias 'Funcion' con F mayúscula tal como exige tu modelo y tu vista EJS
+        
         const boletosDB = await Boleto.findAll({
             include: [
                 {
                     model: Funcion,
-                    as: 'funcion', // <-- El alias mágico que resuelve el error de la pantalla
+                    as: 'funcion', 
                     include: [
-                        { model: Pelicula, as: 'pelicula' }, // Si da error de alias aquí, quita el as: 'pelicula'
-                        { model: Sala, as: 'sala' }          // Si da error de alias aquí, quita el as: 'sala'
+                        { model: Pelicula, as: 'pelicula' }, 
+                        { model: Sala, as: 'sala' }          
                     ]
                 }
             ]
@@ -32,20 +33,24 @@ class BoletoController {
         });
 
     } catch (error) {
-        console.error("👉 ERROR DETALLADO EN LISTAR BOLETOS:", error);
+        console.error("ERROR DETALLADO EN LISTAR BOLETOS:", error);
         res.status(500).send("Error al cargar el historial de boletos: " + error.message);
     }
 }
-    // =========================================================
-    // VISTA DE RESERVACIONES (Si usas una plantilla separada)
-    // =========================================================
+
+// =========================================================
+// VISTA DE RESERVACIONES
+// =========================================================
    async listarReservaciones(req, res) {
     try {
         const boletosDB = await Boleto.findAll({
+            where: {
+                estado: 'reservado' 
+            },
             include: [
                 {
                     model: Funcion,
-                    as: 'funcion', // <-- Sincronizado idénticamente
+                    as: 'funcion',
                     include: [
                         { model: Pelicula, as: 'pelicula' },
                         { model: Sala, as: 'sala' }
@@ -59,25 +64,105 @@ class BoletoController {
             listaReservaciones: boletosDB
         });
     } catch (error) {
-        console.error("👉 ERROR DETALLADO EN RESERVACIONES:", error);
+        console.error("ERROR DETALLADO EN RESERVACIONES:", error);
         res.status(500).send("Error al cargar reservaciones: " + error.message);
     }
 }
 
-    // =========================================================
-    // REGISTRAR / ALMACENAR BOLETO
-    // =========================================================
-    async almacenarBoleto(req, res) {
+//==========================================================
+// VISTA EDITAR
+//==========================================================
+async pantallaEditar(req, res) {
+    try {
+        const { id } = req.params;
+        
+        // 1. Buscamos el boleto que queremos editar
+        const boleto = await Boleto.findByPk(id);
+        if (!boleto) {
+            return res.status(404).send("Boleto no encontrado");
+        }
+
+        // 2. Traemos todas las funciones por si el usuario quiere cambiar de horario/sala
+        const funciones = await Funcion.findAll({
+            include: ['pelicula', 'sala'] 
+        });
+
+        // 3. ¡AQUÍ ESTÁ EL TRUCO! Traemos la lista real de películas para el menú desplegable del EJS
+        const peliculas = await Pelicula.findAll();
+
+        const salas = await Sala.findAll();
+
+        // 4. Renderizamos pasando las variables EXACTAS que pide el EJS
+        res.render('editarBoleto', { 
+            boleto, 
+            funciones, 
+            peliculas,
+            salas,          
+            title: "Editar Boleto" 
+        });
+
+    } catch (error) {
+        console.error("Error al cargar pantalla de edición:", error);
+        res.status(500).send("Error del servidor");
+    }
+}
+//==========================================================
+// ACTUALIZAR
+//==========================================================
+async actualizar(req, res) {
+    try {
+        const { id } = req.params;
+        const { nombreCliente, cantidadAsientos, funcionId } = req.body;
+
+        //Buscamos el boleto original antes de cambiarlo
+        const boleto = await Boleto.findByPk(id);
+        if (!boleto) {
+            return res.status(404).send("Boleto no encontrado");
+        }
+
+        const funcion = await Funcion.findByPk(funcionId);
+        if (!funcion) {
+            return res.status(404).send("La funcion seleccionada no existe");
+        }
+
+        const aforoDevuelto = funcion.disponibilidad + boleto.cantidadAsientos;
+
+
+        if (aforoDevuelto < parseInt(cantidadAsientos)) {
+            return res.status(400).send("No hay suficientes asientos disponibles para esta modificacion.");
+        }
+
+        // Si hay espacio, calculamos la nueva disponibilidad real
+        funcion.disponibilidad = aforoDevuelto - parseInt(cantidadAsientos);
+        await funcion.save();
+
+        //actualizamos los datos del boleto
+        boleto.nombreCliente = nombreCliente;
+        boleto.cantidadAsientos = parseInt(cantidadAsientos);
+        boleto.funcionId = funcionId;
+        await boleto.save();
+
+        res.redirect('/boletos');
+
+    } catch (error) {
+        console.error("Error al actualizar el boleto:", error);
+        res.status(500).send("Error al guardar los cambios del boleto");
+    }
+}
+
+// =========================================================
+// REGISTRAR / ALMACENAR BOLETO
+// =========================================================
+async almacenarBoleto(req, res) {
         try {
             const { peliculaId, salaId, nombreCliente, cantidadAsientos, fecha } = req.body;
 
-            // Buscamos la función programada
             const funcionExistente = await Funcion.findOne({
                 where: { peliculaId, salaId, fecha }
             });
 
             if (!funcionExistente) {
-                return res.status(404).send("No hay ninguna función programada para esa combinación.");
+                return res.status(404).send("No hay ninguna funcion programada para esa combinacion.");
             }
 
             if (funcionExistente.disponibilidad < parseInt(cantidadAsientos)) {
@@ -100,12 +185,12 @@ class BoletoController {
             console.error("Error en almacenarBoleto:", error);
             res.status(500).send("Error interno al procesar la venta");
         }
-    }
+}
 
-    // =========================================================
-    // ELIMINAR / CANCELAR RESERVACIÓN
-    // =========================================================
-    async eliminar(req, res) {
+// =========================================================
+// ELIMINAR / CANCELAR RESERVACIÓN
+// =========================================================
+async eliminar(req, res) {
         try {
             const { id } = req.params;
 
@@ -126,7 +211,31 @@ class BoletoController {
             console.error("Error al eliminar boleto:", error);
             res.status(500).send("Error al cancelar la reservación");
         }
+}
+
+//==========================================================
+// CONFIRMAR RESERVAS
+//==========================================================
+async confirmarReservacion(req, res) {
+    try {
+        const { id } = req.params;
+        const boleto = await Boleto.findByPk(id);
+        
+        if (!boleto) {
+            return res.status(404).send("La reservacion no existe.");
+        }
+        boleto.estado = 'confirmado'; 
+        await boleto.save();
+
+        res.redirect('/reservaciones');
+
+    } catch (error) {
+        console.error("Error al confirmar la reservacion:", error);
+        res.status(500).send("Error del servidor al procesar el cobro");
     }
+}
+
+
 }
 
 module.exports = new BoletoController();

@@ -7,14 +7,14 @@ const salaController = require('../controladores/SalaController');
 const boletoController = require('../controladores/BoletoController');
 const funcionController = require('../controladores/FuncionController');
 
-// ====== ENTIDAD: PELÍCULAS ======
+// ====== ENTIDAD: PELICULAS ======
 router.get('/', peliculaController.listar);
 router.get('/crear', peliculaController.vistaCrear);
 router.get('/editar/:id', peliculaController.vistaEditar);
 router.post('/peliculas/guardar', peliculaController.almacenar);
 router.put('/actualizar/:id', peliculaController.actualizar);
 router.get('/eliminar/:id', peliculaController.eliminar);
-router.get('/top5', peliculaController.top5); // <-- Vincula el Top 5
+router.get('/top5', peliculaController.top5); 
 
 // ====== ENTIDAD: SALAS ======
 router.get('/salas', salaController.listarSalas);
@@ -35,12 +35,15 @@ router.get('/pelicula/:id/funciones', funcionController.listarPorPelicula);
 
 // ====== ENTIDAD: BOLETOS, RESERVACIONES Y FILTROS ======
 router.get('/boletos', boletoController.listarBoletos);
-router.get('/reservaciones', boletoController.listarReservaciones); // ¡Reactivado con éxito!
+router.get('/reservaciones', boletoController.listarReservaciones);
 router.post('/boletos/guardar', boletoController.almacenarBoleto);
+router.get('/boletos/editar/:id', boletoController.pantallaEditar); 
+router.post('/boletos/actualizar/:id', boletoController.actualizar);
 router.get('/boletos/eliminar/:id', boletoController.eliminar);
+router.get('/boletos/confirmar/:id', boletoController.confirmarReservacion);
 
 // ====== FILTROS ======
-//router.get('/filtros/fechas', boletoController.vistaFiltros);
-//router.post('/filtros/buscar', boletoController.procesarFiltro);
+router.get('/filtros/fechas', funcionController.filtrarPorFecha);
+
 
 module.exports = router;
