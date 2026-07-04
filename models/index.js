@@ -1,20 +1,21 @@
 const { Sequelize } = require('sequelize');
 const path = require('path');
 
-// 1. Configurar la conexion a SQLite
+//configurar la conexion a SQLite
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: path.join(__dirname, '../cine.sqlite'),
     logging: false 
 });
 
-// 2. Importar e inicializar los modelos
+//importar e inicializar los modelos
 const Pelicula = require('./Pelicula')(sequelize);
 const Sala = require('./Sala')(sequelize);
 const Funcion = require('./Funcion')(sequelize);
-const Boleto = require('./Boleto')(sequelize); // <--- Importamos Boleto
+const Boleto = require('./Boleto')(sequelize); 
+const Usuario = require('./Usuario')(sequelize);
 
-// 3. Declarar las Relaciones (Asociaciones)
+//Declarar las Relaciones 
 // Relaciones: Funcion <-> Pelicula / Sala
 Funcion.belongsTo(Pelicula, { foreignKey: 'peliculaId', as: 'pelicula' });
 Pelicula.hasMany(Funcion, { foreignKey: 'peliculaId', as: 'funciones' });
@@ -22,12 +23,12 @@ Pelicula.hasMany(Funcion, { foreignKey: 'peliculaId', as: 'funciones' });
 Funcion.belongsTo(Sala, { foreignKey: 'salaId', as: 'sala' });
 Sala.hasMany(Funcion, { foreignKey: 'salaId', as: 'funciones' });
 
-// Nueva Relacion: Boleto <-> Funcion (Crea funcionId en la tabla boletos)
+// Nueva Relacion: Boleto <-> Funcion
 Boleto.belongsTo(Funcion, { foreignKey: 'funcionId', as: 'funcion' });
 Funcion.hasMany(Boleto, { foreignKey: 'funcionId', as: 'boletos' });
 
 
-// 4. Probar conexion y Sincronizar Base de Datos
+//probar conexion y Sincronizar Base de Datos
 (async () => {
     try {
         await sequelize.authenticate();
@@ -48,5 +49,6 @@ module.exports = {
     Pelicula,
     Sala,
     Funcion,
-    Boleto // <--- Exportamos Boleto
+    Boleto,
+    Usuario,
 };
