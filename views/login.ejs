@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: 0 auto;">
+    
+    <h2>🎬 Ingreso al Sistema</h2>
+    <p style="color: #6c757d;">Introduce tus credenciales para continuar.</p>
+
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+        <form action="/login" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+            
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label>Correo Electrónico:</label>
+                <input type="email" name="email" required placeholder="correo@cine.com" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label>Contraseña:</label>
+                <input type="password" name="password" required placeholder="******" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            </div>
+
+            <button type="submit" style="padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px;">
+                Iniciar Sesión
+            </button>
+        </form>
+    </div>
+
+    <p style="text-align: center; margin-top: 15px;">
+        ¿No tienes una cuenta? <a href="/registro" style="color: #28a745; text-decoration: none;">Regístrate aquí</a>
+    </p>
+</body>
+</html>
