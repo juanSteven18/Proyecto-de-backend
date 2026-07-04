@@ -1,0 +1,35 @@
+<nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 25px; color: white; display: flex; justify-content: space-between; align-items: center; font-family: Arial, sans-serif; width: 100%; box-sizing: border-box;">
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
+        <a href="/" style="color: white; text-decoration: none; font-weight: bold;">🎬 Cartelera</a>
+        <a href="/top5" style="color: #ffc107; text-decoration: none;">🔥 Top Recientes</a>
+        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none;">📅 Filtro Fechas</a>
+
+        <% if (locals.user) { %>
+            <% if (user.rol === 'admin') { %>
+                <a href="/salas" style="color: #333; text-decoration: none; background: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;">🏢 Salas</a>
+                <a href="/crear" style="color: white; text-decoration: none;">➕ Añadir Película</a>
+            <% } %>
+
+            <% if (user.rol === 'admin' || user.rol === 'cajero') { %>
+                <a href="/boletos" style="color: white; text-decoration: none;">🎫 Ventas/Boletos</a>
+                <a href="/reservaciones" style="color: #28a745; text-decoration: none;">📋 Ver Reservaciones</a>
+            <% } %>
+        <% } %>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <% if (locals.user) { %>
+            <span style="color: #e9ecef; font-size: 0.9em;">
+                👤 <strong><%= user.email %></strong> 
+                <span style="background: #6c757d; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; text-transform: uppercase; margin-left: 5px;">
+                    <%= user.rol %>
+                </span>
+            </span>
+            <a href="/logout" style="color: #dc3545; text-decoration: none; font-weight: bold; background: rgba(220, 53, 69, 0.1); padding: 5px 10px; border-radius: 4px;">Cerrar Sesión</a>
+        <% } else { %>
+            <a href="/login" style="color: white; text-decoration: none;">Iniciar Sesión</a>
+            <a href="/registro" style="color: #28a745; text-decoration: none; font-weight: bold; border: 1px solid #28a745; padding: 5px 10px; border-radius: 4px;">Registrarse</a>
+        <% } %>
+    </div>
+</nav>
