@@ -4,15 +4,9 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
+<%- include('parcial/navbar') %>
 <body>
-    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-family: Arial, sans-serif;">
-        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
-        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
-        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
-        <a href="/reservaciones" style="color: #28a745; margin-right: 20px; text-decoration: none; font-weight: bold;">📋 Ver Reservaciones</a>
-        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
-        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
-    </nav>
+   
 
     <h1><%= title %></h1>
     <p style="font-family: Arial, sans-serif; color: #6c757d;">Estas son las películas más recientes añadidas a la cartelera.</p>

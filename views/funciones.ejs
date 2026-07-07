@@ -6,17 +6,13 @@
 </head>
 <body style="font-family: Arial, sans-serif; margin: 20px; background-color: #f8f9fa;">
 
-    <nav style="background-color: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <a href="/" style="color: white; text-decoration: none; margin-right: 15px; font-weight: bold;">🎬 Peliculas</a>
-        <a href="/salas" style="color: white; text-decoration: none; margin-right: 15px; font-weight: bold;">🏢 Salas</a>
-        <a href="/funciones" style="color: white; text-decoration: none; margin-right: 15px; font-weight: bold;">🎟️ Funciones</a>
-    </nav>
+  <%- include('parcial/navbar') %>
 
     <h2><%= title %></h2>
-    
+
+    <% if (locals.user && (user.rol === 'admin' || user.rol === 'cajero')) { %>
     <div style="background-color: white; padding: 20px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 30px; border: 1px solid #ddd;">
         <h3 style="margin-top: 0; color: #333;">Programar Nueva Funcion</h3>
-        
         <form action="/funciones/guardar" method="POST" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
             <div>
                 <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Pelicula:</label>
@@ -26,7 +22,7 @@
                         <option value="<%= peli.id %>"><%= peli.titulo %></option>
                     <% }) %>
                 </select>
-            </div>
+            </div> 
 
             <div>
                 <label style="display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px;">Sala:</label>
@@ -55,7 +51,7 @@
 
             <button type="submit" style="padding: 9px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Anadir Funcion</button>
         </form>
-    </div>
+    </div><% } %>
 
     <h3 style="color: #333;">Listado de Horarios en Cartelera</h3>
     <% if (listaFunciones && listaFunciones.length > 0) { %>
@@ -92,9 +88,15 @@
                         <td style="padding: 12px; border: 1px solid #ddd;"><%= funcion.hora %></td>
                         <td style="padding: 12px; border: 1px solid #ddd;"><%= funcion.precio %>$</td>
                         <td style="padding: 12px; border: 1px solid #ddd;"><%= funcion.disponibilidad %> asientos</td>
-                        <td style="padding: 12px; border: 1px solid #ddd;">
-                            <a href="/funciones/eliminar/<%= funcion.id %>" style="color: #dc3545; text-decoration: none; font-weight: bold;">❌ Eliminar</a>
-                        </td>
+                        <td>
+    <% if (locals.user && user.rol === 'admin') { %>
+        <a href="/funciones/eliminar/<%= funcion.id %>" style="color: #dc3545; text-decoration: none; font-weight: bold;">
+            ❌ Eliminar
+        </a>
+    <% } else { %>
+        <span style="color: #6c757d; font-style: italic;">Sin acciones</span>
+    <% } %>
+</td>
                     </tr>
                 <% }) %>
             </tbody>

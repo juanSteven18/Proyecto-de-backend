@@ -5,14 +5,7 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-    <nav style="background: #343a40; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-family: Arial, sans-serif;">
-        <a href="/" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎬 Películas</a>
-        <a href="/salas" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🏢 Salas</a>
-        <a href="/boletos" style="color: white; margin-right: 20px; text-decoration: none; font-weight: bold;">🎟️ Ventas/Boletos</a>
-        <a href="/reservaciones" style="color: #28a745; margin-right: 20px; text-decoration: none; font-weight: bold;">📋 Ver Reservaciones</a>
-        <a href="/top5" style="color: #ffc107; margin-right: 20px; text-decoration: none; font-weight: bold;">🔥 Top Recientes</a>
-        <a href="/filtros/fechas" style="color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Filtro Fechas</a>
-    </nav>
+ <%- include('parcial/navbar') %>
 
     <h1><%= title %></h1>
 <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #dee2e6; font-family: Arial, sans-serif;">
@@ -24,7 +17,6 @@
         🎫 Registrar Nueva Venta de Boleto
     </h3>
 
-    <!-- Rejilla para distribuir los campos en filas organizadas -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px;">
         
         <div>
@@ -64,7 +56,6 @@
 
     </div>
 
-    <!-- Botón ocupando una línea inferior independiente -->
     <div style="text-align: right;">
         <button type="submit" style="background-color: #28a745; color: white; padding: 12px 30px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s;">
             ⚡ Emitir Ticket
