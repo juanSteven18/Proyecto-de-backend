@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= pelicula.titulo %> - Detalle</title>
+</head>
+<body>
+
+   <style>
+    .resena-container { max-width: 800px; margin: 20px auto; font-family: sans-serif; }
+    .btn-volver { display: inline-block; margin-bottom: 15px; color: #6c757d; text-decoration: none; font-weight: bold; }
+    .btn-volver:hover { color: #333; text-decoration: underline; }
+    .form-resena { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 30px; }
+    .resena-item { background: white; padding: 15px; border-bottom: 1px solid #eee; margin-bottom: 10px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    textarea { width: 100%; height: 80px; margin: 10px 0; }
+    .btn-publicar { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+</style>
+
+<div class="resena-container">
+    <a href="/" class="btn-volver">← Volver a la cartelera</a>
+
+    <h1><%= pelicula.titulo %></h1>
+    
+    <% if (locals.user) { %>
+        <div class="form-resena">
+            <h4>Deja tu opinión como: <%= user.email %></h4>
+            <form action="/resenas/guardar" method="POST">
+                <input type="hidden" name="peliculaId" value="<%= pelicula.id %>">
+                <input type="hidden" name="nombreUsuario" value="<%= user.email %>">
+                
+                <textarea name="comentario" required placeholder="Escribe aquí..."></textarea>
+                
+                <select name="puntuacion">
+                    <option value="5">5 ⭐</option>
+                    <option value="4">4 ⭐</option>
+                    <option value="3">3 ⭐</option>
+                    <option value="2">2 ⭐</option>
+                    <option value="1">1 ⭐</option>
+                </select>
+                <button type="submit" class="btn-publicar">Publicar</button>
+            </form>
+        </div>
+    <% } else { %>
+        <p><a href="/login">Inicia sesión</a> para dejar una reseña.</p>
+    <% } %>
+
+    <h3>Reseñas de Usuarios</h3>
+<% if (resenas && resenas.length > 0) { %>
+    <% resenas.forEach(resena => { %>
+        <div class="resena-item" id="resena-<%= resena.id %>">
+            <p><strong><%= resena.nombreUsuario %></strong> - <%= resena.puntuacion %> ⭐</p>
+            <p id="texto-<%= resena.id %>"><%= resena.comentario %></p>
+
+            <% if (locals.user && (user.rol === 'admin' || user.email === resena.nombreUsuario)) { %>
+                <div style="margin-top: 10px;">
+                    <button onclick="toggleEditar('<%= resena.id %>')" style="background: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Editar</button>
+                    
+                    <form action="/resenas/eliminar/<%= resena.id %>" method="POST" style="display: inline;">
+                        <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                    </form>
+                </div>
+
+                <div id="form-edit-<%= resena.id %>" style="display: none; margin-top: 10px; background: #e9ecef; padding: 10px; border-radius: 5px;">
+                    <form action="/resenas/editar/<%= resena.id %>" method="POST">
+                        <textarea name="comentario" required style="width: 100%;"><%= resena.comentario %></textarea>
+                        <select name="puntuacion">
+                            <% for(let i=1; i<=5; i++) { %>
+                                <option value="<%= i %>" <%= resena.puntuacion == i ? 'selected' : '' %>><%= i %> ⭐</option>
+                            <% } %>
+                        </select>
+                        <button type="submit" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer;">Guardar</button>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+    <% }) %>
+<% } else { %>
+    <p>No hay reseñas todavía. ¡Sé el primero en opinar!</p>
+<% } %>
+</body>
+<script>
+    function toggleEditar(id) {
+        const form = document.getElementById('form-edit-' + id);
+        form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+    }
+</script>
+</html>

@@ -149,6 +149,7 @@ async listarPorPelicula(req, res) {
             res.status(500).send("Error interno al filtrar funciones");
         }
 }
+
 //FILTRO POR FECHAS
  async filtrarPorFecha(req, res) {
     try {
@@ -156,7 +157,7 @@ async listarPorPelicula(req, res) {
         const { fechaInicio, fin } = req.query;
 
        
-        // CASO 1:No ha filtrado nada
+        //si no ha filtrado nada
        
         if (!fechaInicio || !fin) {
             return res.render('filtros', {
@@ -168,7 +169,7 @@ async listarPorPelicula(req, res) {
         }
 
        
-        // CASO 2: Filtrado 
+        // filtra
         const inicioDate = new Date(`${fechaInicio}T00:00:00`);
         const finDate = new Date(`${fin}T23:59:59`);
 

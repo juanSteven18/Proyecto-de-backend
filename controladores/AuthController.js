@@ -11,17 +11,19 @@ module.exports = {
     //proceso de datos de resgistro
     registrar: async (req, res) => {
         try {
-            const { email, password, rol } = req.body;
+            const { nombre, email, password, rol } = req.body;
 
             //validacion de campos obligatorias
-            if (!email || !password) {
+            if (!email || !password || !nombre) {
                 return res.status(400).send("Faltan campos obligatorios: email y password.");
             }
 
             // Creamos el usuario
             await Usuario.create({
+                nombre,
                 email,
                 password,
+                membresiaId: 1,
                 rol: rol || 'cliente'
             });
 

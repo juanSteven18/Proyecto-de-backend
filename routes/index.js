@@ -7,6 +7,10 @@ const peliculaController = require('../controladores/PeliculaController');
 const salaController = require('../controladores/SalaController');
 const boletoController = require('../controladores/BoletoController');
 const funcionController = require('../controladores/FuncionController');
+const dulceriaController = require('../controladores/dulceriaController');
+const resenaController = require('../controladores/resenaController');
+const MembresiaController = require('../controladores/MembresiaController');
+const UserController = require('../controladores/UserController');
 
 //importacion de middelware
 const { verificarToken, restringirA, cargarUsuarioOpcional } = require('../middlewares/authMiddleware');
@@ -84,5 +88,52 @@ router.post('/boletos/guardar', verificarToken, boletoController.almacenarBoleto
 //Filtros
 router.get('/filtros/fechas', cargarUsuarioOpcional, funcionController.filtrarPorFecha);
 
+
+
+// Ruta publica para ver la dulceria
+router.get('/dulceria', cargarUsuarioOpcional, dulceriaController.listar);
+
+// Rutas de administracion (Solo Admins)
+router.post('/dulceria/guardar', verificarToken, restringirA('admin'), dulceriaController.guardar);
+router.post('/dulceria/eliminar/:id', verificarToken, restringirA('admin'), dulceriaController.eliminar);
+
+// Ruta operativa (Admin y Cajero)
+router.post('/dulceria/vender/:id', verificarToken, restringirA('admin', 'cajero'), dulceriaController.vender);
+
+router.get('/dulceria/editar/:id', verificarToken, restringirA('admin'), dulceriaController.editarForm);
+router.post('/dulceria/actualizar/:id', verificarToken, restringirA('admin'), dulceriaController.actualizar);
+router.get('/dulceria/historial', verificarToken, restringirA('admin', 'cajero'), dulceriaController.historial);
+
+//ver reseñas
+router.get('/peliculas/detalle/:id', resenaController.listar);
+
+// Crear reseña (Solo usuarios logueados)
+router.post('/resenas/guardar', verificarToken, resenaController.crear);
+
+// Editar reseña (Solo el autor o Admin)
+router.post('/resenas/editar/:id', verificarToken, resenaController.editar);
+
+// Eliminar reseña (Solo Admin o el autor)
+router.post('/resenas/eliminar/:id', verificarToken, resenaController.eliminar);
+
+//ver perfil propio
+router.get('/perfil', verificarToken, MembresiaController.verPerfil);
+
+// Ruta para ver a otros perfiles (Solo para Admin/Cajero)
+router.get('/perfil/:id', verificarToken, (req, res, next) => {
+    if (req.user.rol === 'admin' || req.user.rol === 'cajero') return MembresiaController.verPerfil(req, res);
+    res.redirect('/perfil'); 
+});
+
+//listado de usuarios
+router.get('/usuarios', verificarToken, (req, res, next) => {
+    // Solo permitir si es admin o cajero
+    if (req.user.rol === 'admin' || req.user.rol === 'cajero') {
+        return UserController.listarUsuarios(req, res);
+    }
+    res.redirect('/'); 
+});
+//Restar puntos de membresias
+router.post('/admin/reset-puntos/:id', UserController.resetPuntos);
 
 module.exports = router;

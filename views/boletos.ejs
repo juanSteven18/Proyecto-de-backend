@@ -40,9 +40,14 @@
 </div>
 
         <div>
-            <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #4a5568;">Nombre del Cliente:</label>
-            <input type="text" name="nombreCliente" placeholder="Ej. Juan Pérez" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box;" />
-        </div>
+    <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #4a5568;">Cliente:</label>
+    <select name="usuarioId" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px;">
+        <option value="" disabled selected>-- Seleccione Cliente --</option>
+        <% usuarios.forEach(u => { %>
+            <option value="<%= u.id %>"><%= u.nombre %> (<%= u.email %>)</option>
+        <% }) %>
+    </select>
+</div>
 
         <div>
             <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #4a5568;">Cantidad de Asientos:</label>
@@ -68,6 +73,7 @@
         <thead>
             <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6; text-align: left;">
                 <th style="padding: 12px;">Película Solicitada</th>
+                <th style="padding: 12px;">Cliente</th>
                 <th style="padding: 12px;">Sala Asignada</th>
                 
                 <th style="padding: 12px;">Fecha de la Función</th>
@@ -83,6 +89,10 @@
                 <% listaBoletos.forEach((boleto) => { %>
                     <tr style="border-bottom: 1px solid #eee;">
                         <td>🎬 <%= boleto.funcion && boleto.funcion.pelicula ? boleto.funcion.pelicula.titulo : 'Sin Película' %></td>
+                        <td>
+                            <%= boleto.usuario ? boleto.usuario.nombre : 'Sin Cliente' %><br>
+                <small style="color: #666;"><%= boleto.usuario ? boleto.usuario.email : '' %></small>
+                        </td>
                         <td>🏢 <%= boleto.funcion && boleto.funcion.sala ? boleto.funcion.sala.nombre : 'Sin Sala' %></td>
                         <td>📅 <%= boleto.funcion ? boleto.funcion.fecha : 'Sin Fecha' %></td>
                         <td style="padding: 12px; text-align: center;">

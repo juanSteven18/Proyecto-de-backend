@@ -1,14 +1,14 @@
 //npx nodemon ./bin/www
 require('dotenv').config();
-require('./models/index');
+const db = require('./models');
 var createError = require('http-errors');
 var express = require('express');
+const session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const methodOverride = require('method-override');
-
-
+const authMiddleware = require('./middlewares/authMiddleware'); 
 
 
 var indexRouter = require('./routes/index');
@@ -27,8 +27,32 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(authMiddleware.cargarUsuarioOpcional);
+
+db.Membresia.findOrCreate({
+  where: { id: 1 },
+  defaults: { nombre: 'Sin Membresía' }
+}).then(() => {
+  console.log("Membresía inicial verificada correctamente.");
+}).catch(err => {
+  console.error("Error al crear la membresía inicial:", err);
+});
+
+app.use((req, res, next) => {
+ 
+    if (req.user) {
+        res.locals.user = req.user;
+    } else {
+        res.locals.user = null;
+    }
+    next();
+})
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+
 
 
 // catch 404 and forward to error handler

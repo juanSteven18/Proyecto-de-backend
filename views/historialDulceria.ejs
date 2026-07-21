@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px;">
+
+    <%- include('parcial/navbar') %>
+
+    <div style="max-width: 1200px; margin: 0 auto; display: block; clear: both;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #34495e; padding-bottom: 10px; margin-bottom: 20px;">
+            <h1 style="color: #2c3e50; margin: 0;">📋 Historial de Ventas - Dulcería</h1>
+            <a href="/dulceria" style="background: #007bff; color: white; text-decoration: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; font-size: 0.9em;">🍿 Volver al Catálogo</a>
+        </div>
+
+        <p>A continuación se listan de forma cronológica todas las transacciones realizadas en la dulcería de la sucursal.</p>
+
+        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow-x: auto; padding: 10px;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 800px; text-align: left;">
+                <thead>
+                    <tr style="background-color: #2c3e50; color: white;">
+                        <th style="padding: 12px; border-radius: 4px 0 0 0;">Fecha / Hora</th>
+                        <th style="padding: 12px;">Cliente</th>
+                        <th style="padding: 12px;">Producto Adquirido</th>
+                        <th style="padding: 12px; text-align: center;">Cantidad</th>
+                        <th style="padding: 12px; text-align: right;">P. Unitario</th>
+                        <th style="padding: 12px; text-align: right; border-radius: 0 4px 0 0;">Total Recaudado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (!ventas || ventas.length === 0) { %>
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 25px; color: #6c757d; font-style: italic;">
+                                No se han registrado ventas de dulcería en el historial aún.
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% ventas.forEach((venta, index) => { %>
+                            <tr style="background-color: <%= index % 2 === 0 ? '#ffffff' : '#f8f9fa' %>; border-bottom: 1px solid #e9ecef;">
+                                <td style="padding: 12px;">
+                                    <%= new Date(venta.createdAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) %>
+                                </td>
+                                <td style="padding: 12px; font-weight: bold; color: #495057;">
+                                    <%= venta.cliente %>
+                                </td>
+                                <td style="padding: 12px;">
+                                    <% if (venta.producto) { %>
+                                        <span style="font-size: 1.2em; margin-right: 5px;">
+                                            <%= venta.producto.categoria === 'snack' ? '🍿' : (venta.producto.categoria === 'bebida' ? '🥤' : '🎁') %>
+                                        </span>
+                                        <strong><%= venta.producto.nombre %></strong>
+                                    <% } else { %>
+                                        <span style="color: #dc3545; font-style: italic;">[Producto Eliminado del Catálogo]</span>
+                                    <% } %>
+                                </td>
+                                <td style="padding: 12px; text-align: center; font-weight: bold;">
+                                    <%= venta.cantidad %> uds.
+                                </td>
+                                <td style="padding: 12px; text-align: right; color: #28a745; font-weight: bold;">
+                                    $<%= parseFloat(venta.precioUnitario).toFixed(2) %>
+                                </td>
+                                <td style="padding: 12px; text-align: right; color: #155724; background-color: #d4edda; font-weight: bold;">
+                                    $<%= parseFloat(venta.total).toFixed(2) %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

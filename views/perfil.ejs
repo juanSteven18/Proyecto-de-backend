@@ -1,0 +1,41 @@
+<style>
+    .perfil-container { display: flex; gap: 20px; padding: 20px; }
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    .status-card { color: white; padding: 15px; border-radius: 8px; text-align: center; margin-top: 10px; font-weight: bold; }
+    .info-row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+</style>
+<title>Perfil</title>
+
+<h1>Perfil de Usuario</h1>
+
+<div class="perfil-container">
+    <div class="card">
+        <h3>Nombre: <%= usuario.nombre %></h3>
+         <h3>Rol: <%= usuario.rol %></h3>
+        
+        <div class="info-row"><span>Nivel:</span> <strong><%= usuario.membresia.nombre %></strong></div>
+        
+
+        <% 
+           let nivel = usuario.membresia.nombre.toLowerCase();
+           let color = (nivel.includes('oro')) ? '#FFD700' : (nivel.includes('plata')) ? '#C0C0C0' : '#CD7F32';
+        %>
+        <div class="status-card" style="background-color: <%= color %>; color: #333;">
+            Sellos Acumulados: <%= usuario.sellos %>
+        </div>
+
+        <div class="info-row" style="margin-top: 20px;">
+            <span>Última asistencia:</span>
+            <strong>
+                <%= ultimoBoleto ? new Date(ultimoBoleto.createdAt).toLocaleDateString() : 'Sin registros' %>
+            </strong>
+        </div>
+
+       
+        <% if (user.rol === 'admin' && !esPropio) { %>
+            <form action="/admin/reset-puntos/<%= usuario.id %>" method="POST" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-danger" style="width: 100%;">Resetear Puntos</button>
+            </form>
+        <% } %>
+    </div>
+</div>

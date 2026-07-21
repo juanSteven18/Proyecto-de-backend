@@ -1,12 +1,10 @@
 const jwt = require('jsonwebtoken');
-
+const { Usuario } = require('../models'); 
 module.exports = {
-    //bloqueo de ruta si el users no ha iniciado sesion
-    verificarToken: (req, res, next) => {
+    verificarToken: async (req, res, next) => { 
         const token = req.cookies.token;
 
         if (!token) {
-            // Si no hay token lo redirigimos directo al login
             return res.redirect('/login');
         }
 
@@ -14,27 +12,33 @@ module.exports = {
             const deconstruido = jwt.verify(token, process.env.JWT_SECRET);
             
             
-            req.user = deconstruido;
+            const usuarioCompleto = await Usuario.findByPk(deconstruido.id);
             
-            
-            res.locals.user = deconstruido;
+            if (!usuarioCompleto) {
+                res.clearCookie('token');
+                return res.redirect('/login');
+            }
 
+            req.user = usuarioCompleto;
+            res.locals.user = usuarioCompleto; 
             next(); 
         } catch (error) {
-            
             res.clearCookie('token');
             return res.redirect('/login');
         }
     },
 
-    //no bloquea la ruta pero si el usuario esta logueado carga su perfil
-    cargarUsuarioOpcional: (req, res, next) => {
+    cargarUsuarioOpcional: async (req, res, next) => { 
         const token = req.cookies.token;
         if (token) {
             try {
                 const deconstruido = jwt.verify(token, process.env.JWT_SECRET);
-                req.user = deconstruido;
-                res.locals.user = deconstruido;
+                const usuarioCompleto = await Usuario.findByPk(deconstruido.id);
+                
+                if (usuarioCompleto) {
+                    req.user = usuarioCompleto;
+                    res.locals.user = usuarioCompleto;
+                }
             } catch (error) {
                 res.clearCookie('token');
             }
@@ -42,16 +46,14 @@ module.exports = {
         next(); 
     },
 
-    //comprueba si el rol del usuario coincide con los permitidos
     restringirA: (...rolesPermitidos) => {
         return (req, res, next) => {
             if (!req.user) {
                 return res.redirect('/login');
             }
-
-            
             if (!rolesPermitidos.includes(req.user.rol)) {
-                return res.status(403).send("Acceso denegado: No tienes los permisos de rol requeridos para esta seccion");           }
+                return res.status(403).send("Acceso denegado: No tienes los permisos de rol requeridos");
+            }
 
             next(); 
         };

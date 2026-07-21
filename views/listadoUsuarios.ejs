@@ -1,0 +1,81 @@
+<title>Lista de Usuarios</title>
+
+<div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; margin: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 style="font-size: 24px; color: #333; margin: 0; font-weight: 600;">👥 Gestión de Usuarios</h1>
+        
+        <a href="javascript:history.back()" style="background-color: #6c757d; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-size: 14px;">⬅ Volver atrás</a>
+    </div>
+    <input type="text" id="buscador" placeholder="🔍 Buscar por nombre o email..." 
+           onkeyup="filtrarUsuarios()" 
+           style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+
+ 
+    <table width="100%" id="tablaUsuarios" style="border-collapse: collapse; text-align: left; font-size: 14px;">
+ 
+<thead>
+    <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+        <th style="padding: 12px; color: #555;">ID</th>
+        <th style="padding: 12px; color: #555;">Nombre</th>
+        <th style="padding: 12px; color: #555;">Email</th>
+        <th style="padding: 12px; color: #555;">Rol</th> 
+        <th style="padding: 12px; color: #555;">Membresía</th>
+        <th style="padding: 12px; color: #555;">Sellos</th>
+        <th style="padding: 12px; color: #555;">Acciones</th>
+    </tr>
+</thead>
+
+
+<tbody>
+    <% usuarios.forEach(usuario => { %>
+        <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 12px; color: #888; font-family: monospace;"><%= usuario.id %></td>
+            <td style="padding: 12px;"><%= usuario.nombre %></td>
+            <td style="padding: 12px;"><%= usuario.email %></td>
+            
+            
+            <td style="padding: 12px;">
+                <span style="font-size: 0.85em; padding: 3px 8px; border-radius: 12px; font-weight: bold;
+                    <%= usuario.rol === 'admin' ? 'background: #f8d7da; color: #721c24;' : 
+                        usuario.rol === 'cajero' ? 'background: #d1ecf1; color: #0c5460;' : 
+                        'background: #e2e3e5; color: #383d41;' %>">
+                    <%= usuario.rol.toUpperCase() %>
+                </span>
+            </td>
+
+            <td style="padding: 12px;">
+                <%= usuario.membresia ? usuario.membresia.nombre : 'Sin Membresía' %>
+            </td>
+            <td style="padding: 12px; font-weight: bold;"><%= usuario.sellos %></td>
+
+
+<td style="padding: 12px;">
+    <a href="/perfil/<%= usuario.id %>" style="color: #007bff; text-decoration: none; margin-right: 10px;">Ver Perfil</a>
+    
+    <% if (user.rol === 'admin') { %>
+        <form action="/admin/reset-puntos/<%= usuario.id %>" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('¿Seguro que deseas reiniciar los puntos de este usuario?')" 
+                    style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                Eliminar Puntos
+            </button>
+        </form>
+    <% } %>
+</td>
+            </td>
+        </tr>
+    <% }); %>
+</tbody>
+</table>
+</div>
+
+<script>
+    function filtrarUsuarios() {
+        let input = document.getElementById("buscador").value.toLowerCase();
+        let filas = document.getElementById("tablaUsuarios").getElementsByTagName("tr");
+        for (let i = 1; i < filas.length; i++) {
+            let texto = filas[i].innerText.toLowerCase();
+            filas[i].style.display = texto.includes(input) ? "" : "none";
+        }
+    }
+</script>

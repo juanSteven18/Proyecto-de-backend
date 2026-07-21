@@ -7,17 +7,11 @@
 </head>
 <body style="font-family: Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px;">
 
-    <!-- 💡 BARRA DE NAVEGACIÓN -->
   <%- include('parcial/navbar') %>
 
-      
-
-
-    <!-- TITULO DE LA PÁGINA -->
     <h1 style="color: #2c3e50; border-bottom: 2px solid #34495e; padding-bottom: 10px;"><%= title %></h1>
 
 
-    <!-- 🔐 FORMULARIO: SOLO VISIBLE PARA ADMIN O CAJERO -->
     <% if (locals.user && (user.rol === 'admin' || user.rol === 'cajero')) { %>
         <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px;">
             <h3 style="margin-top: 0; color: #2c3e50;">Añadir Nueva Película a Cartelera</h3>
@@ -42,7 +36,6 @@
     <% } %>
 
 
-    <!-- 🎬 TABLA DE PELÍCULAS -->
     <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
         <h3 style="margin-top: 0; color: #2c3e50;">Películas en Exhibición</h3>
         
@@ -63,18 +56,18 @@
                             <td style="padding: 12px;"><%= pelicula.genero %></td>
                             <td style="padding: 12px;"><%= pelicula.duracion %> min</td>
                             <td style="padding: 12px; text-align: center;">
-                                <!-- Acciones Públicas -->
-                                <a href="/pelicula/<%= pelicula.id %>" style="margin: 0 5px; color: #007bff; text-decoration: none; font-weight: bold;">👁️ Ver</a>
+                                
+                                <a href="/peliculas/detalle/<%= pelicula.id %>" style="margin: 0 5px; color: #28a745; text-decoration: none; font-weight: bold;">💬 Reseñas</a>
                                 <span style="color: #ccc;">|</span>
                                 <a href="/pelicula/<%= pelicula.id %>/funciones" style="margin: 0 5px; color: #17a2b8; text-decoration: none; font-weight: bold;">📅 Funciones</a>
                                 
-                                <!-- Acciones de Edición (Admin / Cajero) -->
+                                
                                 <% if (locals.user && (user.rol === 'admin' || user.rol === 'cajero')) { %>
                                     <span style="color: #ccc;">|</span>
                                     <a href="/editar/<%= pelicula.id %>" style="margin: 0 5px; color: #28a745; text-decoration: none; font-weight: bold;">✏️ Editar</a>
                                 <% } %>
                                 
-                                <!-- Acciones de Destrucción (Solo Admin) -->
+        
                                 <% if (locals.user && user.rol === 'admin') { %>
                                     <span style="color: #ccc;">|</span>
                                     <a href="/eliminar/<%= pelicula.id %>" style="margin: 0 5px; color: #dc3545; text-decoration: none; font-weight: bold;" onclick="return confirm('¿Seguro que deseas eliminar esta película de la cartelera?')">❌ Eliminar</a>

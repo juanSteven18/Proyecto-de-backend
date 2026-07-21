@@ -1,16 +1,17 @@
 const { Boleto, Funcion, Pelicula, Sala } = require('../models'); 
 const { Op } = require('sequelize');
+const { actualizarNivelUsuario } = require('../help/membresiaHelp');
+const { Usuario } = require('../models');
 
 class BoletoController {
 
-// =========================================================
-// LISTAR BOLETOS
-// =========================================================
+//listar boletos
    async listarBoletos(req, res) {
     try {
         
         const boletosDB = await Boleto.findAll({
             include: [
+                { model: Usuario, as: 'usuario' },
                 {
                     model: Funcion,
                     as: 'funcion', 
@@ -25,11 +26,16 @@ class BoletoController {
         const peliculasDB = await Pelicula.findAll();
         const salasDB = await Sala.findAll();
 
+        const usuariosDB = await Usuario.findAll({
+            where: { rol: 'cliente' }
+        });
+
         res.render('boletos', {
             title: 'Historial de Boletos Vendidos',
             listaBoletos: boletosDB,
             peliculas: peliculasDB,
-            salas: salasDB
+            salas: salasDB,
+            usuarios: usuariosDB
         });
 
     } catch (error) {
@@ -38,9 +44,7 @@ class BoletoController {
     }
 }
 
-// =========================================================
-// VISTA DE RESERVACIONES
-// =========================================================
+//vista reservaciones
    async listarReservaciones(req, res) {
     try {
         const boletosDB = await Boleto.findAll({
@@ -69,30 +73,28 @@ class BoletoController {
     }
 }
 
-//==========================================================
-// VISTA EDITAR
-//==========================================================
+//vista editar
 async pantallaEditar(req, res) {
     try {
         const { id } = req.params;
         
-        // 1. Buscamos el boleto que queremos editar
+        //Buscamos el boleto que queremos editar
         const boleto = await Boleto.findByPk(id);
         if (!boleto) {
             return res.status(404).send("Boleto no encontrado");
         }
 
-        // 2. Traemos todas las funciones por si el usuario quiere cambiar de horario/sala
+        //Traemos todas las funciones 
         const funciones = await Funcion.findAll({
             include: ['pelicula', 'sala'] 
         });
 
-        // 3. ¡AQUÍ ESTÁ EL TRUCO! Traemos la lista real de películas para el menú desplegable del EJS
+        //Traemos la lista real de peliculas para el menú desplegable del EJS
         const peliculas = await Pelicula.findAll();
 
         const salas = await Sala.findAll();
 
-        // 4. Renderizamos pasando las variables EXACTAS que pide el EJS
+        //Renderizamos pasando las variables
         res.render('editarBoleto', { 
             boleto, 
             funciones, 
@@ -106,9 +108,8 @@ async pantallaEditar(req, res) {
         res.status(500).send("Error del servidor");
     }
 }
-//==========================================================
-// ACTUALIZAR
-//==========================================================
+
+//Actualizar
 async actualizar(req, res) {
     try {
         const { id } = req.params;
@@ -150,12 +151,11 @@ async actualizar(req, res) {
     }
 }
 
-// =========================================================
-// REGISTRAR / ALMACENAR BOLETO
-// =========================================================
+//registrar / almacenar boletos
 async almacenarBoleto(req, res) {
         try {
-            const { peliculaId, salaId, nombreCliente, cantidadAsientos, fecha } = req.body;
+            console.log("CONTENIDO DE REQ.USER:", req.user);
+            const { peliculaId, salaId, nombreCliente,usuarioId, cantidadAsientos, fecha } = req.body;
 
             const funcionExistente = await Funcion.findOne({
                 where: { peliculaId, salaId, fecha }
@@ -169,12 +169,21 @@ async almacenarBoleto(req, res) {
                 return res.status(400).send("No hay suficientes asientos disponibles.");
             }
 
+            const clienteSeleccionado = await Usuario.findByPk(usuarioId);
+
             // Creamos el boleto en la base de datos
             await Boleto.create({
-                nombreCliente,
+                nombreCliente: clienteSeleccionado.nombre,
+                usuarioId: usuarioId,
                 cantidadAsientos: parseInt(cantidadAsientos),
                 funcionId: funcionExistente.id
             });
+
+            if (clienteSeleccionado) {
+            await clienteSeleccionado.increment('sellos', { by: 1 });
+            await clienteSeleccionado.update({ ultimaCompraAt: new Date() });
+            await actualizarNivelUsuario(clienteSeleccionado.id);
+        }
 
             // Descontamos disponibilidad
             await funcionExistente.decrement('disponibilidad', { by: parseInt(cantidadAsientos) });
@@ -187,9 +196,7 @@ async almacenarBoleto(req, res) {
         }
 }
 
-// =========================================================
-// ELIMINAR / CANCELAR RESERVACIÓN
-// =========================================================
+//eliminar /cancelar reserva
 async eliminar(req, res) {
         try {
             const { id } = req.params;
@@ -213,9 +220,7 @@ async eliminar(req, res) {
         }
 }
 
-//==========================================================
-// CONFIRMAR RESERVAS
-//==========================================================
+//confirmar reservas
 async confirmarReservacion(req, res) {
     try {
         const { id } = req.params;
