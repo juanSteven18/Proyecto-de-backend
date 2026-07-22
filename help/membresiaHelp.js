@@ -14,6 +14,10 @@ async function actualizarNivelUsuario(usuarioId) {
         nuevoNivel = 2; // Básica
     }
 
+    console.log(`--- DEBUG MEMBRESÍA ---`);
+    console.log(`Usuario ID: ${usuario.id}, Sellos actuales: ${usuario.sellos}`);
+    console.log(`ID de membresía a asignar (nuevoNivel): ${nuevoNivel}`);
+
     await usuario.update({ membresiaId: nuevoNivel });
 }
 

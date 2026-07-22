@@ -1,4 +1,5 @@
 const { Usuario, Membresia } = require('../models');
+const { actualizarNivelUsuario } = require('../help/membresiaHelp');
 
 module.exports = {
     listarUsuarios: async (req, res) => {
@@ -33,6 +34,7 @@ module.exports = {
                 usuario.sellos = usuario.sellos-1;
             }
             await usuario.save();
+            await actualizarNivelUsuario(usuario.id);
             }
             // Redirigimos de vuelta a la lista
             res.redirect('/usuarios'); 

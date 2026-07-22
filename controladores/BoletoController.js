@@ -7,9 +7,26 @@ class BoletoController {
 
 //listar boletos
    async listarBoletos(req, res) {
-    try {
-        
-        const boletosDB = await Boleto.findAll({
+   try {
+        // Solo traemos los boletos confirmados para la tabla principal de ventas
+        const boletosConfirmados = await Boleto.findAll({
+            where: { estado: 'confirmado' },
+            include: [
+                { model: Usuario, as: 'usuario' },
+                {
+                    model: Funcion,
+                    as: 'funcion', 
+                    include: [
+                        { model: Pelicula, as: 'pelicula' }, 
+                        { model: Sala, as: 'sala' }          
+                    ]
+                }
+            ]
+        });
+
+        // Traemos los cancelados para la lista inferior que pidió el profesor
+        const boletosCancelados = await Boleto.findAll({
+            where: { estado: 'cancelado' },
             include: [
                 { model: Usuario, as: 'usuario' },
                 {
@@ -25,14 +42,12 @@ class BoletoController {
 
         const peliculasDB = await Pelicula.findAll();
         const salasDB = await Sala.findAll();
-
-        const usuariosDB = await Usuario.findAll({
-            where: { rol: 'cliente' }
-        });
+        const usuariosDB = await Usuario.findAll({ where: { rol: 'cliente' } });
 
         res.render('boletos', {
             title: 'Historial de Boletos Vendidos',
-            listaBoletos: boletosDB,
+            listaBoletos: boletosConfirmados,
+            boletosCancelados: boletosCancelados, // <--- Nueva lista para abajo
             peliculas: peliculasDB,
             salas: salasDB,
             usuarios: usuariosDB
@@ -47,11 +62,29 @@ class BoletoController {
 //vista reservaciones
    async listarReservaciones(req, res) {
     try {
-        const boletosDB = await Boleto.findAll({
-            where: {
-                estado: 'reservado' 
+        // 1. Apartados pendientes
+        const reservacionesPendientes = await Boleto.findAll({
+            where: { estado: 'reservado' },
+            include: [
+                { model: Usuario, as: 'usuario' },
+                {
+                    model: Funcion,
+                    as: 'funcion',
+                    include: [
+                        { model: Pelicula, as: 'pelicula' },
+                        { model: Sala, as: 'sala' }
+                    ]
+                }
+            ]
+        });
+
+        // 2. Historial inferior (Cobrados/Confirmados y Cancelados que venían de reservas o en general)
+        const historialProcesados = await Boleto.findAll({
+            where: { 
+                estado: { [Op.in]: ['confirmado', 'cancelado'] } 
             },
             include: [
+                { model: Usuario, as: 'usuario' },
                 {
                     model: Funcion,
                     as: 'funcion',
@@ -65,7 +98,8 @@ class BoletoController {
 
         res.render('reservaciones', {
             title: 'Lista de Apartados Pendientes',
-            listaReservaciones: boletosDB
+            listaReservaciones: reservacionesPendientes,
+            listaProcesados: historialProcesados // <--- La lista inferior con su estado
         });
     } catch (error) {
         console.error("ERROR DETALLADO EN RESERVACIONES:", error);
@@ -176,11 +210,16 @@ async almacenarBoleto(req, res) {
                 nombreCliente: clienteSeleccionado.nombre,
                 usuarioId: usuarioId,
                 cantidadAsientos: parseInt(cantidadAsientos),
-                funcionId: funcionExistente.id
+                funcionId: funcionExistente.id,
+                estado: 'confirmado'
             });
 
             if (clienteSeleccionado) {
-            await clienteSeleccionado.increment('sellos', { by: 1 });
+
+                const totalAsientos = parseInt(cantidadAsientos) || 1;
+
+
+            await clienteSeleccionado.increment('sellos', { by: totalAsientos });
             await clienteSeleccionado.update({ ultimaCompraAt: new Date() });
             await actualizarNivelUsuario(clienteSeleccionado.id);
         }
@@ -192,7 +231,7 @@ async almacenarBoleto(req, res) {
 
         } catch (error) {
             console.error("Error en almacenarBoleto:", error);
-            res.status(500).send("Error interno al procesar la venta");
+            //res.status(500).send("Error interno al procesar la venta");
         }
 }
 
@@ -211,7 +250,13 @@ async eliminar(req, res) {
                 await funcion.increment('disponibilidad', { by: boleto.cantidadAsientos });
             }
 
-            await boleto.destroy();
+            boleto.estado = 'cancelado';
+            await boleto.save();
+
+            const referer = req.get('referer') || '/boletos';
+        if (referer.includes('reservaciones')) {
+            return res.redirect('/reservaciones');
+        }
             res.redirect('/boletos');
 
         } catch (error) {

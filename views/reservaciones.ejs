@@ -49,5 +49,45 @@
         <% } %>
     </div>
 
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 30px;">
+    <h3 style="margin-top: 0; color: #2c3e50;">Historial de Apartados Procesados (Cobrados y Cancelados)</h3>
+    <% if (listaProcesados && listaProcesados.length > 0) { %>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+                <tr style="background-color: #6c757d; color: white; text-align: left;">
+                    <th style="padding: 12px; border: 1px solid #ddd;">Cliente</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Película</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Sala</th>
+                    <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Asiento</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Horario</th>
+                    <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% listaProcesados.forEach(proc => { %>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px; border: 1px solid #ddd;"><%= proc.usuario ? proc.usuario.nombre : proc.nombreCliente %></td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">🎬 <%= proc.funcion && proc.funcion.pelicula ? proc.funcion.pelicula.titulo : 'Sin Película' %></td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">🏢 <%= proc.funcion && proc.funcion.sala ? proc.funcion.sala.nombre : 'Sin Sala' %></td>
+                        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">🎟️ <%= proc.cantidadAsientos %></td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">📅 <%= proc.funcion ? proc.funcion.fecha : 'Sin Fecha' %></td>
+                        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                            <% if (proc.estado === 'confirmado') { %>
+                                <span style="color: #28a745; font-weight: bold;">🟢 Confirmado / Cobrado</span>
+                            <% } else if (proc.estado === 'cancelado') { %>
+                                <span style="color: #dc3545; font-weight: bold;">❌ Cancelado</span>
+                            <% } else { %>
+                                <span style="color: #f39c12; font-weight: bold;"><%= proc.estado %></span>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p style="color: #7f8c8d; font-style: italic; text-align: center; padding: 15px;">No hay apartados procesados aún.</p>
+    <% } %>
+</div>
+
 </body>
 </html>
